@@ -1,0 +1,89 @@
+[
+  {
+    "id": "frontend",
+    "label": "Frontend",
+    "icon": "Monitor",
+    "technologies": [
+      { "name": "React", "highlight": true },
+      { "name": "Next.js", "highlight": true },
+      { "name": "TypeScript", "highlight": true },
+      { "name": "Tailwind CSS", "highlight": false },
+      { "name": "Livewire", "highlight": false },
+      { "name": "Alpine.js", "highlight": false },
+      { "name": "Framer Motion", "highlight": false },
+      { "name": "shadcn/ui", "highlight": false }
+    ]
+  },
+  {
+    "id": "backend",
+    "label": "Backend",
+    "icon": "Server",
+    "technologies": [
+      { "name": "Laravel", "highlight": true },
+      { "name": "Node.js", "highlight": false },
+      { "name": "REST APIs", "highlight": false },
+      { "name": "PHP", "highlight": false },
+      { "name": "Sanctum", "highlight": false },
+      { "name": "Filament", "highlight": false }
+    ]
+  },
+  {
+    "id": "database",
+    "label": "Database",
+    "icon": "Database",
+    "technologies": [
+      { "name": "MySQL", "highlight": true },
+      { "name": "PostgreSQL", "highlight": false },
+      { "name": "Supabase", "highlight": true },
+      { "name": "Eloquent ORM", "highlight": false },
+      { "name": "Redis", "highlight": false }
+    ]
+  },
+  {
+    "id": "mobile",
+    "label": "Mobile",
+    "icon": "Smartphone",
+    "technologies": [
+      { "name": "React Native", "highlight": true },
+      { "name": "Expo", "highlight": true },
+      { "name": "Expo Router", "highlight": false },
+      { "name": "AsyncStorage", "highlight": false }
+    ]
+  },
+  {
+    "id": "ai",
+    "label": "AI & ML",
+    "icon": "Brain",
+    "technologies": [
+      { "name": "Gemini AI", "highlight": true },
+      { "name": "OpenAI API", "highlight": false },
+      { "name": "LangChain", "highlight": false },
+      { "name": "Prompt Engineering", "highlight": false }
+    ]
+  },
+  {
+    "id": "cloud",
+    "label": "Cloud & DevOps",
+    "icon": "Cloud",
+    "technologies": [
+      { "name": "Vercel", "highlight": false },
+      { "name": "GitHub Actions", "highlight": false },
+      { "name": "Docker", "highlight": false },
+      { "name": "Linux Server", "highlight": false },
+      { "name": "Nginx", "highlight": false }
+    ]
+  },
+  {
+    "id": "tools",
+    "label": "Tools & Workflow",
+    "icon": "Wrench",
+    "technologies": [
+      { "name": "Git & GitHub", "highlight": false },
+      { "name": "VS Code", "highlight": false },
+      { "name": "Figma", "highlight": false },
+      { "name": "Postman", "highlight": false },
+      { "name": "Insomnia", "highlight": false },
+      { "name": "Notion", "highlight": false }
+    ]
+  }
+]

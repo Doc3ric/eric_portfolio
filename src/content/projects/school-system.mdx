@@ -1,0 +1,84 @@
+---
+title: "School Management System"
+slug: "school-system"
+status: "production"
+year: 2024
+role: "Lead Developer"
+teamSize: 1
+duration: "4 months"
+coverImage: "/images/projects/school-system/cover.png"
+thumbnail: "/images/projects/school-system/thumb.png"
+gallery: []
+videoDemo: ""
+architectureDiagram: ""
+metrics:
+  - label: "Modules"
+    value: "8"
+  - label: "Status"
+    value: "Live"
+techStack:
+  - "Laravel"
+  - "Livewire"
+  - "MySQL"
+  - "Tailwind CSS"
+tags:
+  - "Education"
+  - "Web"
+  - "Laravel"
+  - "Production"
+liveUrl: ""
+githubUrl: ""
+description: "A live production school management system handling PTA payments, grade promotion, reports, and student records for an active educational institution."
+---
+
+## Overview
+
+A fully live school management system actively used by an educational institution in Bukidnon. The system handles the complete student lifecycle — from enrollment to grade promotion — along with PTA payment management and official report generation.
+
+## Problem
+
+The school was managing everything manually:
+- Enrollment records kept in physical filing cabinets
+- PTA payments tracked in handwritten ledgers
+- Report cards typed individually in Microsoft Word
+- No system for tracking grade promotion or retention
+
+## Architecture
+
+```
+├── Laravel 11 (backend)
+├── Livewire 3 (reactive UI)
+├── MySQL (relational data)
+└── Tailwind CSS (styling)
+```
+
+## Features
+
+- **Student Enrollment** — Digital enrollment with complete student profiles
+- **PTA Payment Management** — Track, record, and generate receipts for PTA fees
+- **Grade Management** — Input and manage grades per subject per student
+- **Grade Promotion** — Automated promotion/retention logic based on final grades
+- **Report Card Generation** — Auto-generated official report cards as PDF
+- **Parent Portal** — Parents can view their child's grades and payment status
+- **Teacher Portal** — Teachers manage grades for their assigned classes
+- **Admin Dashboard** — Full overview of school-wide data
+
+## Challenges
+
+**Challenge 1: Grade Promotion Logic**
+Filipino school grade promotion rules involve multiple subjects with different passing thresholds. I coded the promotion engine as a rules-based service class to handle edge cases cleanly.
+
+**Challenge 2: Report Card Layout**
+DepEd (Department of Education) report cards have very specific layouts. Getting DOMPDF to render the exact layout took significant iteration.
+
+## Lessons Learned
+
+- Production systems require heavy testing — real student data cannot be corrupted
+- School staff needed ongoing training and support after deployment
+- Simple is better: every feature added complexity to the training burden
+
+## Future Improvements
+
+- SMS notifications for grades and payments
+- Financial summary reports for school administration
+- Biometric attendance integration

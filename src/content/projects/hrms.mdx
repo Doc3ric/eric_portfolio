@@ -1,0 +1,119 @@
+---
+title: "Human Resource Management System"
+slug: "hrms"
+status: "production"
+year: 2024
+role: "Lead Developer"
+teamSize: 1
+duration: "6 months"
+coverImage: "/images/projects/hrms/cover.png"
+thumbnail: "/images/projects/hrms/thumb.png"
+gallery:
+  - "/images/projects/hrms/gallery-1.png"
+  - "/images/projects/hrms/gallery-2.png"
+videoDemo: ""
+architectureDiagram: "/images/projects/hrms/arch.png"
+metrics:
+  - label: "Modules"
+    value: "12"
+  - label: "Employee Records"
+    value: "200+"
+  - label: "User Roles"
+    value: "5"
+  - label: "Document Types"
+    value: "8+"
+techStack:
+  - "Laravel"
+  - "Livewire"
+  - "Alpine.js"
+  - "MySQL"
+  - "Tailwind CSS"
+tags:
+  - "Government"
+  - "Web"
+  - "Laravel"
+  - "RBAC"
+liveUrl: ""
+githubUrl: ""
+description: "A government-grade HR management system handling employee records, payroll, documents, and role-based access for 200+ staff members."
+---
+
+## Overview
+
+The Human Resource Management System (HRMS) is a production-grade web application built for a government agency to manage their entire HR workflow — from employee onboarding to payroll computation, leave management, and official document generation.
+
+## Problem
+
+The agency was managing employee records manually using spreadsheets and physical documents. This led to:
+
+- Time-consuming data retrieval for 200+ employees
+- Error-prone manual payroll calculations
+- Difficulty generating standardized government documents
+- No proper access control — all staff had access to sensitive data
+- No audit trail for HR actions
+
+## Research
+
+Before building, I analyzed the agency's existing workflow by sitting with HR staff and understanding their daily tasks. Key findings:
+
+- Most time was spent searching physical files and filling repetitive document templates
+- Data was scattered across 3 different spreadsheets with no single source of truth
+- Payroll computation was done manually every month — prone to errors
+
+## Architecture
+
+The system uses a **Laravel + Livewire** stack for a reactive, server-rendered experience without JavaScript overhead. This was a deliberate choice for a government environment where maintainability and stability are priorities.
+
+```
+├── Laravel (backend + routing)
+├── Livewire (reactive UI components)
+├── Alpine.js (lightweight interactions)
+├── MySQL (relational data, employee hierarchy)
+└── Spatie Laravel Permission (RBAC)
+```
+
+## Features
+
+- **Role-Based Access Control** — 5 user roles with granular permissions (Admin, HR Officer, Department Head, Employee, Viewer)
+- **Employee Management** — Complete profiles, department assignment, employment history
+- **Excel Bulk Import** — Upload hundreds of employee records at once from Excel sheets
+- **Leave Management** — Applications, approvals, leave balance tracking
+- **Payroll Module** — Automatic computation based on attendance, deductions, allowances
+- **Document Generation** — Auto-filled official government document templates (COE, Payslip, Service Records)
+- **Audit Logs** — Every HR action is logged with user and timestamp
+
+## Challenges
+
+**Challenge 1: Excel Import Complexity**
+Employee data came in inconsistent formats from different departments. I built a flexible importer with validation rules and an error report that shows exactly which rows failed and why.
+
+**Challenge 2: Document Template Accuracy**
+Government documents require precise formatting. I used PHP's DOMPDF with Blade templates to generate pixel-perfect PDFs matching the official government formats.
+
+**Challenge 3: Role Hierarchy**
+The permission structure was complex — some roles could approve but not edit; others could view but not export. Spatie's permission system with custom middleware handled this elegantly.
+
+## Lessons Learned
+
+- **Government clients need documentation** — I learned to create a full user manual alongside the system
+- **Data validation is non-negotiable** — A single invalid import could corrupt employee records
+- **Simplicity over cleverness** — HR staff are not always tech-savvy; the UI needed to be dead simple
+
+## Tech Stack
+
+| Layer | Technology |
+|---|---|
+| Backend | Laravel 11 |
+| Frontend | Livewire 3 + Alpine.js |
+| Database | MySQL 8 |
+| Styling | Tailwind CSS |
+| Auth & RBAC | Laravel Sanctum + Spatie |
+| PDF | DOMPDF |
+| Excel | Maatwebsite Excel |
+
+## Future Improvements
+
+- Biometric integration for attendance tracking
+- Mobile app for employee self-service
+- AI-powered payroll anomaly detection
+- Multi-agency support

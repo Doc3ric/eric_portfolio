@@ -1,0 +1,157 @@
+[
+  {
+    "id": "hrms",
+    "slug": "hrms",
+    "title": "Human Resource Management System",
+    "description": "A government-grade HR management system handling employee records, payroll, documents, and role-based access for 200+ staff members across multiple departments.",
+    "status": "production",
+    "statusLabel": "Production",
+    "category": ["web", "government"],
+    "year": 2024,
+    "role": "Lead Developer",
+    "teamSize": 1,
+    "duration": "6 months",
+    "techStack": ["Laravel", "MySQL", "Alpine.js", "Livewire", "Tailwind CSS"],
+    "tags": ["Government", "Web", "Laravel", "RBAC"],
+    "features": [
+      "Role-based access control (RBAC)",
+      "Excel bulk import for employee records",
+      "Automated document generation",
+      "Leave management system",
+      "Payroll computation",
+      "Multi-department hierarchy"
+    ],
+    "checklist": ["Government Agency", "Laravel", "200+ Employees", "RBAC", "Excel Import"],
+    "metrics": [
+      { "label": "Modules", "value": "12" },
+      { "label": "Employee Records", "value": "200+" },
+      { "label": "User Roles", "value": "5" },
+      { "label": "Document Types", "value": "8+" }
+    ],
+    "images": {
+      "coverImage": "/images/projects/hrms/cover.png",
+      "thumbnail": "/images/projects/hrms/thumb.png",
+      "gallery": [],
+      "architectureDiagram": ""
+    },
+    "liveUrl": "",
+    "githubUrl": "",
+    "featured": true,
+    "order": 1
+  },
+  {
+    "id": "english-coach",
+    "slug": "english-coach",
+    "title": "English Coach AI",
+    "description": "An AI-powered mobile language learning app with offline-first architecture, spaced repetition, grammar correction, and a personal AI tutor powered by Gemini.",
+    "status": "in-progress",
+    "statusLabel": "In Progress",
+    "category": ["mobile", "ai"],
+    "year": 2025,
+    "role": "Solo Developer",
+    "teamSize": 1,
+    "duration": "Ongoing",
+    "techStack": ["React Native", "Expo", "Supabase", "Gemini AI", "TypeScript"],
+    "tags": ["AI", "Mobile", "React Native", "Offline-First"],
+    "features": [
+      "Offline-first architecture",
+      "AI grammar correction",
+      "Spaced repetition (SM-2 algorithm)",
+      "Gemini AI personal tutor",
+      "Progress tracking",
+      "40+ learning screens"
+    ],
+    "checklist": ["AI Powered", "React Native", "Offline First", "Gemini AI"],
+    "metrics": [
+      { "label": "Screens", "value": "40+" },
+      { "label": "Lessons", "value": "100+" },
+      { "label": "Algorithm", "value": "SM-2" }
+    ],
+    "images": {
+      "coverImage": "/images/projects/english-coach/cover.png",
+      "thumbnail": "/images/projects/english-coach/thumb.png",
+      "gallery": [],
+      "architectureDiagram": ""
+    },
+    "liveUrl": "",
+    "githubUrl": "",
+    "featured": true,
+    "order": 2
+  },
+  {
+    "id": "school-system",
+    "slug": "school-system",
+    "title": "School Management System",
+    "description": "A live production school management system handling PTA payments, grade promotion, reports, and student records for an active educational institution.",
+    "status": "production",
+    "statusLabel": "Live Production",
+    "category": ["web"],
+    "year": 2024,
+    "role": "Lead Developer",
+    "teamSize": 1,
+    "duration": "4 months",
+    "techStack": ["Laravel", "MySQL", "Livewire", "Tailwind CSS"],
+    "tags": ["Education", "Web", "Laravel", "Production"],
+    "features": [
+      "PTA payment management",
+      "Grade promotion workflow",
+      "Report card generation",
+      "Student enrollment",
+      "Teacher portal",
+      "Parent notifications"
+    ],
+    "checklist": ["Live Production", "PTA Payments", "Grade Promotion", "Reports"],
+    "metrics": [
+      { "label": "Modules", "value": "8" },
+      { "label": "Status", "value": "Live" }
+    ],
+    "images": {
+      "coverImage": "/images/projects/school-system/cover.png",
+      "thumbnail": "/images/projects/school-system/thumb.png",
+      "gallery": [],
+      "architectureDiagram": ""
+    },
+    "liveUrl": "",
+    "githubUrl": "",
+    "featured": true,
+    "order": 3
+  },
+  {
+    "id": "talentflow",
+    "slug": "talentflow",
+    "title": "TalentFlow ATS",
+    "description": "A modern Applicant Tracking System with AI-powered resume parsing, candidate match scoring, Kanban pipeline, offer letter generation, and email automation.",
+    "status": "personal",
+    "statusLabel": "Portfolio Project",
+    "category": ["web", "ai"],
+    "year": 2024,
+    "role": "Solo Developer",
+    "teamSize": 1,
+    "duration": "3 months",
+    "techStack": ["Laravel", "React", "MySQL", "OpenAI"],
+    "tags": ["AI", "HR Tech", "SaaS", "Laravel"],
+    "features": [
+      "AI resume parsing",
+      "Candidate match scoring",
+      "Kanban hiring pipeline",
+      "Offer letter generation",
+      "Email automation",
+      "Interview scheduling"
+    ],
+    "checklist": ["Resume Parsing", "Match Score", "Kanban", "Email Automation"],
+    "metrics": [
+      { "label": "Pipeline Stages", "value": "6" },
+      { "label": "Email Templates", "value": "10+" }
+    ],
+    "images": {
+      "coverImage": "/images/projects/talentflow/cover.png",
+      "thumbnail": "/images/projects/talentflow/thumb.png",
+      "gallery": [],
+      "architectureDiagram": ""
+    },
+    "liveUrl": "",
+    "githubUrl": "",
+    "featured": true,
+    "order": 4
+  }
+]

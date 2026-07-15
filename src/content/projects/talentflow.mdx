@@ -1,0 +1,87 @@
+---
+title: "TalentFlow ATS"
+slug: "talentflow"
+status: "personal"
+year: 2024
+role: "Solo Developer"
+teamSize: 1
+duration: "3 months"
+coverImage: "/images/projects/talentflow/cover.png"
+thumbnail: "/images/projects/talentflow/thumb.png"
+gallery: []
+videoDemo: ""
+architectureDiagram: ""
+metrics:
+  - label: "Pipeline Stages"
+    value: "6"
+  - label: "Email Templates"
+    value: "10+"
+techStack:
+  - "Laravel"
+  - "React"
+  - "Inertia.js"
+  - "MySQL"
+  - "OpenAI API"
+  - "Tailwind CSS"
+tags:
+  - "AI"
+  - "HR Tech"
+  - "SaaS"
+  - "Laravel"
+liveUrl: ""
+githubUrl: ""
+description: "A modern Applicant Tracking System with AI-powered resume parsing, candidate match scoring, Kanban pipeline, offer letter generation, and email automation."
+---
+
+## Overview
+
+TalentFlow is a full-featured Applicant Tracking System (ATS) built to streamline the hiring process. It combines a Kanban-style candidate pipeline with AI-powered resume parsing and automated email workflows.
+
+## Problem
+
+Small and medium businesses struggle with:
+- Manually reading and organizing hundreds of resumes
+- Tracking candidates across email threads and spreadsheets
+- Writing repetitive email templates for every stage of hiring
+- No data on which job postings are performing well
+
+## Architecture
+
+```
+├── Laravel 11 (backend + API)
+├── React + Inertia.js (SPA-like frontend)
+├── MySQL (relational candidate data)
+├── OpenAI API (resume parsing + match scoring)
+└── Laravel Mail + Queues (email automation)
+```
+
+## Features
+
+- **AI Resume Parsing** — Upload PDF resumes; AI extracts name, skills, experience, education
+- **Match Score** — AI scores each candidate against the job description (0–100%)
+- **Kanban Pipeline** — Drag-and-drop candidates through 6 hiring stages
+- **Offer Letter Generation** — Auto-populate offer letter templates with candidate data
+- **Email Automation** — Triggered emails at each pipeline stage (application received, interview invite, offer, rejection)
+- **Job Posting Management** — Create and manage open positions
+- **Analytics Dashboard** — Conversion rates per pipeline stage
+
+## Challenges
+
+**Challenge 1: Resume Parsing Accuracy**
+Resumes come in wildly different formats. I used structured prompts with OpenAI to extract data into a consistent JSON schema, then validated and sanitized the output before saving.
+
+**Challenge 2: Kanban State Sync**
+Real-time drag-and-drop with Inertia.js required careful optimistic UI updates and error rollback when the server request failed.
+
+## Lessons Learned
+
+- AI output needs validation — never trust raw LLM output for database writes
+- Queue-based emails are essential — synchronous email sending causes timeouts on large applicant lists
+- UX matters in B2B tools — even internal tools need to feel good to use
+
+## Future Improvements
+
+- Video interview integration
+- Multi-recruiter collaboration
+- AI-generated job descriptions
+- SaaS multi-tenancy

@@ -1,0 +1,11 @@
+[
+  {
+    "id": "currently-building-1",
+    "title": "English Coach AI",
+    "description": "An AI-powered mobile language learning app with offline-first architecture, spaced repetition algorithms, and a Gemini-powered personal tutor.",
+    "progress": 80,
+    "eta": "August 2026",
+    "techStack": ["React Native", "Expo", "Gemini AI", "Supabase", "TypeScript"],
+    "status": "active"
+  }
+]

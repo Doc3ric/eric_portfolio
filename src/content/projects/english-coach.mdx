@@ -1,0 +1,115 @@
+---
+title: "English Coach AI"
+slug: "english-coach"
+status: "in-progress"
+year: 2025
+role: "Solo Developer"
+teamSize: 1
+duration: "Ongoing"
+coverImage: "/images/projects/english-coach/cover.png"
+thumbnail: "/images/projects/english-coach/thumb.png"
+gallery:
+  - "/images/projects/english-coach/gallery-1.png"
+  - "/images/projects/english-coach/gallery-2.png"
+videoDemo: ""
+architectureDiagram: "/images/projects/english-coach/arch.png"
+metrics:
+  - label: "Screens"
+    value: "40+"
+  - label: "Lessons"
+    value: "100+"
+  - label: "Algorithm"
+    value: "SM-2"
+techStack:
+  - "React Native"
+  - "Expo"
+  - "Supabase"
+  - "Gemini AI"
+  - "TypeScript"
+tags:
+  - "AI"
+  - "Mobile"
+  - "React Native"
+  - "Offline-First"
+liveUrl: ""
+githubUrl: ""
+description: "An AI-powered mobile language learning app with offline-first architecture, spaced repetition, grammar correction, and a Gemini AI personal tutor."
+---
+
+## Overview
+
+English Coach AI is a mobile language learning app designed for Filipino learners who want to improve their English. It combines the proven SM-2 spaced repetition algorithm with real-time AI grammar correction and a personal AI tutor powered by Google's Gemini.
+
+## Problem
+
+Most English learning apps are:
+- Fully online — unusable in areas with poor connectivity
+- Gamification-heavy but shallow on actual language learning science
+- Expensive subscriptions beyond what many Filipino learners can afford
+- Generic — not tailored to Filipino language patterns and common mistakes
+
+## Research
+
+I studied the SM-2 spaced repetition algorithm (the same one used by Anki) and read research on second-language acquisition. Key insights:
+
+- Spaced repetition is the most evidence-backed method for vocabulary retention
+- Immediate feedback on grammar errors accelerates learning
+- A conversational AI tutor can simulate real English practice safely
+
+## Architecture
+
+The app is built with **offline-first** architecture — all lessons, vocabulary, and progress data are stored locally using AsyncStorage + SQLite, then synced to Supabase when online.
+
+```
+├── React Native + Expo (cross-platform mobile)
+├── Expo Router (file-based navigation)
+├── AsyncStorage + SQLite (offline data)
+├── Supabase (cloud sync + auth)
+├── Gemini AI (grammar correction + AI tutor)
+└── TypeScript (strict mode)
+```
+
+## Features
+
+- **Offline-First Learning** — All lessons work without internet; sync happens in background
+- **SM-2 Spaced Repetition** — Cards are scheduled based on how well you remember them
+- **AI Grammar Correction** — Write sentences; Gemini corrects and explains errors
+- **Personal AI Tutor** — Conversational practice with a Gemini-powered English tutor
+- **Progress Tracking** — Streaks, XP, level progression
+- **40+ Screens** — Onboarding, lessons, vocabulary, tutor, settings, progress
+
+## Challenges
+
+**Challenge 1: Offline-First Sync**
+Building a reliable sync mechanism that handles conflicts (offline edits vs. server data) required careful state management and a queue-based sync system.
+
+**Challenge 2: SM-2 Implementation**
+The algorithm needs to run locally and be precise — wrong intervals mean ineffective learning. I implemented and unit-tested the algorithm independently before integrating.
+
+**Challenge 3: AI Latency**
+Gemini API calls add latency. I implemented streaming responses and skeleton loaders so the UI feels responsive even while waiting for AI output.
+
+## Lessons Learned
+
+- **Offline-first is hard** — It's not just caching; it's designing every feature to work without a network
+- **AI error handling is critical** — Gemini can fail or timeout; graceful fallbacks are essential
+- **Mobile performance matters** — JS-heavy animations need to be optimized differently than web
+
+## Tech Stack
+
+| Layer | Technology |
+|---|---|
+| Framework | React Native + Expo |
+| Navigation | Expo Router |
+| Language | TypeScript (strict) |
+| Offline Storage | AsyncStorage + SQLite |
+| Backend & Auth | Supabase |
+| AI | Google Gemini API |
+| State | Zustand |
+
+## Future Improvements
+
+- Voice pronunciation scoring
+- Community challenge rooms
+- Filipino-to-English translation mode
+- App Store / Play Store release (ETA: August 2026)

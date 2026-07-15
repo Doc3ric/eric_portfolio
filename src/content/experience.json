@@ -1,0 +1,71 @@
+[
+  {
+    "id": "exp-hrms",
+    "company": "Government Agency",
+    "role": "HRMS Developer",
+    "type": "contract",
+    "startDate": "2024-01",
+    "endDate": "2024-07",
+    "description": "Designed and built a full-featured Human Resource Management System for a government agency. The system handles employee records, payroll, leave management, and automated document generation for 200+ staff across multiple departments.",
+    "highlights": [
+      "Built 12 core modules from scratch using Laravel + Livewire",
+      "Implemented Role-Based Access Control (RBAC) for 5 user roles",
+      "Created Excel bulk import for employee onboarding",
+      "Automated generation of official government documents",
+      "Deployed and maintained in a production government environment"
+    ],
+    "techStack": ["Laravel", "Livewire", "Alpine.js", "MySQL", "Tailwind CSS"],
+    "location": "Malaybalay City, Bukidnon"
+  },
+  {
+    "id": "exp-school",
+    "company": "Educational Institution",
+    "role": "School Management System Developer",
+    "type": "contract",
+    "startDate": "2023-08",
+    "endDate": "2024-01",
+    "description": "Developed a live production school management system currently used by an active educational institution. The system manages student enrollment, PTA payments, grade promotion, report cards, and parent communications.",
+    "highlights": [
+      "Built and deployed a fully live production system",
+      "Implemented PTA payment management with receipt generation",
+      "Created automated grade promotion workflows",
+      "Generated official report cards and academic documents",
+      "System is actively used in daily school operations"
+    ],
+    "techStack": ["Laravel", "Livewire", "MySQL", "Tailwind CSS"],
+    "location": "Malaybalay City, Bukidnon"
+  },
+  {
+    "id": "exp-freelance",
+    "company": "Freelance",
+    "role": "Full Stack Developer",
+    "type": "freelance",
+    "startDate": "2022-06",
+    "endDate": "Present",
+    "description": "Working as an independent full stack developer building web applications, dashboards, REST APIs, and mobile apps for various clients. Focus on Laravel, React, and AI-integrated solutions.",
+    "highlights": [
+      "Built TalentFlow ATS with AI-powered resume parsing",
+      "Developed English Coach AI mobile app (React Native + Gemini)",
+      "Built multiple admin dashboards and REST APIs",
+      "Integrated AI capabilities into client projects"
+    ],
+    "techStack": ["Laravel", "React", "React Native", "Next.js", "TypeScript", "Gemini AI"],
+    "location": "Remote"
+  },
+  {
+    "id": "exp-education",
+    "company": "University",
+    "role": "BSIT Graduate",
+    "type": "education",
+    "startDate": "2018-06",
+    "endDate": "2022-03",
+    "description": "Bachelor of Science in Information Technology. Focused on software development, database management, and web technologies. Capstone project involved building a web-based information system.",
+    "highlights": [
+      "Bachelor of Science in Information Technology",
+      "Specialized in software development and web technologies",
+      "Completed capstone project: web-based information system"
+    ],
+    "techStack": ["PHP", "MySQL", "HTML/CSS", "JavaScript"],
+    "location": "Bukidnon, Philippines"
+  }
+]
