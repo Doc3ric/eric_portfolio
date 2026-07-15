@@ -47,7 +47,7 @@ export function InteractiveBackground() {
 
       {/* Static aurora orbs */}
       <div
-        className="animate-float absolute -left-32 top-0 h-[500px] w-[500px] rounded-full opacity-[0.06] blur-3xl"
+        className="animate-float absolute -left-32 top-0 h-[500px] w-[500px] rounded-full opacity-[0.15] blur-3xl"
         style={{
           background:
             "radial-gradient(circle, oklch(0.60 0.22 250) 0%, transparent 70%)",
@@ -56,7 +56,7 @@ export function InteractiveBackground() {
         }}
       />
       <div
-        className="animate-float absolute -right-32 top-1/3 h-[600px] w-[600px] rounded-full opacity-[0.05] blur-3xl"
+        className="animate-float absolute -right-32 top-1/3 h-[600px] w-[600px] rounded-full opacity-[0.12] blur-3xl"
         style={{
           background:
             "radial-gradient(circle, oklch(0.58 0.24 290) 0%, transparent 70%)",
@@ -65,7 +65,7 @@ export function InteractiveBackground() {
         }}
       />
       <div
-        className="animate-float absolute bottom-0 left-1/3 h-[400px] w-[400px] rounded-full opacity-[0.04] blur-3xl"
+        className="animate-float absolute bottom-0 left-1/3 h-[400px] w-[400px] rounded-full opacity-[0.10] blur-3xl"
         style={{
           background:
             "radial-gradient(circle, oklch(0.72 0.18 210) 0%, transparent 70%)",

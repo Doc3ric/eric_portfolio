@@ -12,6 +12,7 @@ import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { useScrolled } from "@/hooks/useScrolled";
 import { siteConfig } from "@/config/site.config";
+import { ThemeToggle } from "@/components/shared/ThemeToggle";
 
 export function Navbar() {
   const scrolled = useScrolled(20);
@@ -39,24 +40,24 @@ export function Navbar() {
         {/* ── Logo ────────────────────────────────────────────── */}
         <Link
           href="/"
-          className="group flex items-center gap-2"
+          className="group flex items-center gap-2.5"
           aria-label="Eric Alenton — Home"
         >
-          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-brand-blue to-brand-purple text-xs font-bold text-white shadow-lg">
+          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-brand-blue to-brand-purple text-sm font-bold text-white shadow-lg shadow-brand-blue/20 transition-transform group-hover:scale-105">
             EA
           </span>
-          <span className="hidden font-semibold tracking-tight text-foreground transition-colors group-hover:text-primary sm:block">
+          <span className="font-semibold tracking-tight text-foreground transition-colors group-hover:text-primary">
             Eric Alenton
           </span>
         </Link>
 
         {/* ── Desktop Nav ─────────────────────────────────────── */}
-        <div className="hidden items-center gap-1 md:flex">
+        <div className="hidden items-center gap-6 md:flex">
           {siteConfig.nav.map((item) => (
             <Link
               key={item.href}
               href={item.href}
-              className="rounded-md px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+              className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
             >
               {item.label}
             </Link>
@@ -84,6 +85,8 @@ export function Navbar() {
               ⌘K
             </kbd>
           </button>
+
+          <ThemeToggle />
 
           {/* Resume CTA */}
           <a
@@ -119,11 +122,14 @@ export function Navbar() {
           <SheetContent side="right" className="w-72 border-border bg-background p-0">
             <div className="flex h-full flex-col">
               {/* Mobile header */}
-              <div className="flex items-center gap-2 border-b border-border px-6 py-4">
-                <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-gradient-to-br from-brand-blue to-brand-purple text-xs font-bold text-white">
-                  EA
-                </span>
-                <span className="font-semibold">{siteConfig.name}</span>
+              <div className="flex items-center justify-between border-b border-border px-6 py-4">
+                <div className="flex items-center gap-2">
+                  <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-gradient-to-br from-brand-blue to-brand-purple text-xs font-bold text-white">
+                    EA
+                  </span>
+                  <span className="font-semibold">{siteConfig.name}</span>
+                </div>
+                <ThemeToggle />
               </div>
 
               {/* Mobile nav links */}

@@ -39,7 +39,7 @@ export function Hero() {
     >
       <div className="container-xl flex min-h-[calc(100vh-4rem)] flex-col items-center justify-center py-20 lg:flex-row lg:gap-16 lg:py-28">
         {/* ── Left Column ────────────────────────────────────────── */}
-        <div className="flex flex-1 flex-col gap-8 text-center lg:text-left">
+        <div className="flex flex-1 flex-col gap-10 text-center lg:text-left">
           {/* Availability badge */}
           <FadeUp delay={0}>
             <div className="flex justify-center lg:justify-start">
@@ -56,13 +56,11 @@ export function Hero() {
           {/* Headline */}
           <FadeUp delay={0.1}>
             <h1 className="text-4xl font-bold leading-tight tracking-tight sm:text-5xl md:text-6xl lg:text-6xl xl:text-7xl">
-              Building{" "}
-              <span className="gradient-text">Production-Ready</span>
-              <br />
+              Building <span className="gradient-text">Production-Ready</span>
+              <br className="hidden sm:block" />
               Web Applications
-              <br />
-              with Laravel, React{" "}
-              <span className="gradient-text">&amp; AI</span>
+              <br className="hidden sm:block" />
+              with Laravel, React <span className="gradient-text">&amp; AI</span>
             </h1>
           </FadeUp>
 
@@ -89,8 +87,7 @@ export function Hero() {
             <p className="mx-auto max-w-xl text-base leading-relaxed text-muted-foreground lg:mx-0 lg:text-lg">
               {siteConfig.name} — {siteConfig.title} from{" "}
               <span className="text-foreground/80">{siteConfig.location}</span>.
-              I build scalable web applications, AI-powered tools, dashboards,
-              mobile applications, and government systems that work in the real world.
+              Building software that solves real-world problems. I specialize in scalable web applications, AI-powered tools, dashboards, and government systems.
             </p>
           </FadeUp>
 
@@ -120,7 +117,10 @@ export function Hero() {
               <a
                 href={siteConfig.resume}
                 download
-                className={cn(buttonVariants({ variant: "outline" }), "gap-2")}
+                className={cn(
+                  buttonVariants({ variant: "outline" }),
+                  "gap-2 border-border bg-surface-1/50 hover:bg-surface-2 hover:border-brand-blue/30 backdrop-blur-sm shadow-sm"
+                )}
               >
                 <Download className="h-4 w-4" />
                 Download Resume
@@ -137,6 +137,42 @@ export function Hero() {
               </a>
             </div>
           </FadeUp>
+
+          {/* Highlights & Mini Stats */}
+          <motion.div
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5, duration: 0.5, ease: "easeOut" }}
+            className="mt-2 flex flex-col gap-6 border-t border-border/50 pt-6"
+          >
+            <div className="flex flex-wrap items-center justify-center gap-3 lg:justify-start">
+              {["Government Systems", "AI Applications", "REST APIs", "Modern Dashboards"].map((pill) => (
+                <span
+                  key={pill}
+                  className="inline-flex items-center gap-1.5 rounded-full bg-surface-1/50 border border-border px-3 py-1 text-xs font-medium text-muted-foreground"
+                >
+                  <span className="text-brand-blue">✔</span>
+                  {pill}
+                </span>
+              ))}
+            </div>
+            <div className="flex justify-center gap-8 lg:justify-start">
+              <div className="flex flex-col">
+                <span className="text-2xl font-bold text-foreground">12+</span>
+                <span className="text-xs text-muted-foreground uppercase tracking-wider">Projects</span>
+              </div>
+              <div className="h-10 w-px bg-border/50" />
+              <div className="flex flex-col">
+                <span className="text-2xl font-bold text-foreground">3</span>
+                <span className="text-xs text-muted-foreground uppercase tracking-wider">Production</span>
+              </div>
+              <div className="h-10 w-px bg-border/50" />
+              <div className="flex flex-col">
+                <span className="text-2xl font-bold text-foreground">20+</span>
+                <span className="text-xs text-muted-foreground uppercase tracking-wider">Technologies</span>
+              </div>
+            </div>
+          </motion.div>
         </div>
 
         {/* ── Right Column — Profile Card ─────────────────────────── */}
@@ -145,12 +181,15 @@ export function Hero() {
           className="relative mt-12 flex shrink-0 justify-center lg:mt-0"
         >
           <div className="relative">
+            {/* Profile image soft glow */}
+            <div className="absolute inset-0 -m-8 bg-brand-blue/20 blur-[100px] rounded-full z-0 opacity-50" />
+
             {/* Profile photo card */}
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.3, duration: 0.5, ease: "easeOut" }}
-              className="relative h-72 w-64 overflow-hidden rounded-3xl border border-border bg-surface-1 shadow-2xl sm:h-80 sm:w-72 z-10"
+              className="relative h-80 w-72 overflow-hidden rounded-3xl border border-border bg-surface-1 shadow-2xl sm:h-96 sm:w-80 z-10"
             >
               {/* Profile Image (points to public/images/profile.png) */}
               <div className="absolute inset-0 z-0">
@@ -193,7 +232,7 @@ export function Hero() {
                 transition={{ delay: delay + 0.5, duration: 0.4, ease: "easeOut" }}
               >
                 <motion.div
-                  animate={{ y: [0, -6, 0] }}
+                  animate={{ y: [0, -12, 0] }}
                   transition={{
                     duration: 3 + Math.random() * 2,
                     repeat: Infinity,

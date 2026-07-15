@@ -81,6 +81,9 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
+  --surface-1: oklch(0.98 0 0);
+  --surface-2: oklch(0.95 0 0);
+  --surface-3: oklch(0.92 0 0);
 }
 
 /* ── Portfolio Dark Theme (overrides shadcn defaults) ─────────────────────── */
@@ -123,6 +126,9 @@
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 8%);
   --sidebar-ring: oklch(0.65 0.2 255);
+  --surface-1: oklch(0.11 0 0);
+  --surface-2: oklch(0.14 0 0);
+  --surface-3: oklch(0.18 0 0);
 }
 
 /* ── Midnight Theme ───────────────────────────────────────────────────────── */
@@ -161,9 +167,9 @@
   --color-brand-cyan: oklch(0.72 0.18 210);
 
   /* Surface tokens */
-  --color-surface-1: oklch(0.11 0 0);
-  --color-surface-2: oklch(0.14 0 0);
-  --color-surface-3: oklch(0.18 0 0);
+  --color-surface-1: var(--surface-1);
+  --color-surface-2: var(--surface-2);
+  --color-surface-3: var(--surface-3);
 
   /* Status colors */
   --color-status-production: oklch(0.65 0.18 145);

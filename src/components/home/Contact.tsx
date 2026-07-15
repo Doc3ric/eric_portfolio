@@ -41,12 +41,26 @@ export function Contact() {
     setStatus("submitting");
 
     try {
-      // Simulate sending API request or mailto action
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-      
-      // Successfully sent
-      setStatus("success");
-      setFormData({ name: "", email: "", subject: "", message: "" });
+      const response = await fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({
+          access_key: "YOUR_WEB3FORMS_ACCESS_KEY_HERE",
+          ...formData,
+        }),
+      });
+
+      const result = await response.json();
+      if (result.success) {
+        setStatus("success");
+        setFormData({ name: "", email: "", subject: "", message: "" });
+      } else {
+        setStatus("error");
+        setErrorMessage(result.message || "Failed to send message.");
+      }
     } catch (err) {
       setStatus("error");
       setErrorMessage("Failed to send message. Please try again or email directly.");
