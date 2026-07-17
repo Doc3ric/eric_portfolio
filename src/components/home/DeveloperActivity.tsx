@@ -1,5 +1,8 @@
 "use client";
 
+import { useState, useEffect } from "react";
+import { useTheme } from "next-themes";
+import { GitHubCalendar } from "react-github-calendar";
 import { motion } from "motion/react";
 import { GitBranch, GitCommit, GitPullRequest, Code2, Sparkles, Terminal, Activity, Calendar } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -12,36 +15,13 @@ const activity = homeData as ActivityType;
 
 export function DeveloperActivity() {
   const { ref, inView } = useInView<HTMLDivElement>({ threshold: 0.1 });
+  const { resolvedTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+  
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
-  // Generate a mock contribution graph data structure (7 days x 20 weeks)
-  const weeks = 22;
-  const days = 7;
-  const gridCells = Array.from({ length: weeks * days }).map((_, i) => {
-    // Generate organic-looking variation using a deterministic pseudorandom generator.
-    // This prevents React Hydration mismatches by ensuring server and client HTML match exactly.
-    const pseudoRand = Math.abs(Math.sin(i + 5)) * 1000 % 1;
-    let level = 0; // Empty
-    if (pseudoRand > 0.85) level = 4; // High activity
-    else if (pseudoRand > 0.7) level = 3; // Medium-high
-    else if (pseudoRand > 0.5) level = 2; // Medium
-    else if (pseudoRand > 0.35) level = 1; // Low
-    return level;
-  });
-
-  const getLevelColor = (level: number) => {
-    switch (level) {
-      case 1:
-        return "bg-brand-blue/20 border-brand-blue/10";
-      case 2:
-        return "bg-brand-blue/40 border-brand-blue/20";
-      case 3:
-        return "bg-brand-blue/70 border-brand-blue/30";
-      case 4:
-        return "bg-gradient-to-br from-brand-blue to-brand-purple border-brand-blue/40";
-      default:
-        return "bg-surface-3 border-border/20";
-    }
-  };
 
   return (
     <section id="activity" className="section" aria-label="Developer Activity">
@@ -128,48 +108,55 @@ export function DeveloperActivity() {
             transition={{ duration: 0.5, delay: 0.3 }}
             className="md:col-span-2 rounded-2xl border border-border bg-surface-1 p-6 flex flex-col gap-6"
           >
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <Terminal className="h-4 w-4 text-muted-foreground" />
-                <span className="text-xs font-semibold uppercase tracking-widest text-muted-foreground/80">
-                  Weekly Contribution Activity
-                </span>
+            <div className="flex flex-col gap-2">
+              <div>
+                <div className="flex items-center gap-2">
+                  <Terminal className="h-4 w-4 text-brand-blue" />
+                  <span className="text-xs font-semibold uppercase tracking-widest text-foreground">
+                    Open Source Activity
+                  </span>
+                </div>
+                <p className="text-sm text-muted-foreground mt-1">
+                  Tracking my recent development updates and repository activity on GitHub.
+                </p>
               </div>
-              <span className="text-[10px] text-muted-foreground/60">Past 150 days</span>
             </div>
 
-            {/* Heatmap Grid */}
-            <div className="flex flex-col gap-1 overflow-x-auto pb-2">
-              <div className="grid grid-flow-col gap-1 auto-cols-max">
-                {Array.from({ length: weeks }).map((_, wIndex) => (
-                  <div key={wIndex} className="grid grid-rows-7 gap-1">
-                    {Array.from({ length: days }).map((_, dIndex) => {
-                      const level = gridCells[wIndex * days + dIndex];
-                      return (
-                        <div
-                          key={dIndex}
-                          className={cn(
-                            "h-2.5 w-2.5 rounded-sm border transition-all duration-300 hover:scale-125",
-                            getLevelColor(level)
-                          )}
-                          title={`Activity level: ${level}`}
-                        />
-                      );
-                    })}
-                  </div>
-                ))}
-              </div>
+            <div className="flex flex-col items-center justify-center min-h-[160px] overflow-hidden rounded-xl bg-surface-2/30 p-4">
+              {mounted ? (
+                <div className="max-w-full overflow-x-auto pb-2 -mx-2 px-2 scrollbar-thin">
+                  <GitHubCalendar 
+                    username="Doc3ric"
+                    colorScheme={resolvedTheme === "dark" ? "dark" : "light"}
+                    theme={{
+                      light: ['#ebedf0', '#bae6fd', '#7dd3fc', '#38bdf8', '#0284c7'],
+                      dark: ['#1e1e24', '#0ea5e940', '#0ea5e970', '#0ea5e9a0', '#0ea5e9']
+                    }}
+                    transformData={(contributions) => contributions.slice(-150)}
+                  />
+                </div>
+              ) : (
+                <div className="h-[120px] w-full animate-pulse rounded-lg bg-surface-3/50" />
+              )}
+            </div>
 
-              {/* Legend */}
-              <div className="mt-2 flex items-center justify-end gap-1.5 text-[10px] text-muted-foreground">
-                <span>Less</span>
-                <div className="h-2 w-2 rounded-sm border border-border/20 bg-surface-3" />
-                <div className="h-2 w-2 rounded-sm border border-brand-blue/10 bg-brand-blue/20" />
-                <div className="h-2 w-2 rounded-sm border border-brand-blue/20 bg-brand-blue/40" />
-                <div className="h-2 w-2 rounded-sm border border-brand-blue/30 bg-brand-blue/70" />
-                <div className="h-2 w-2 rounded-sm border border-brand-blue/40 bg-gradient-to-br from-brand-blue to-brand-purple" />
-                <span>More</span>
+            <div className="flex items-center justify-between border-t border-border pt-4">
+              <div className="flex items-center gap-2 text-xs font-medium text-status-production">
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-status-production opacity-75" />
+                  <span className="relative inline-flex h-2 w-2 rounded-full bg-status-production" />
+                </span>
+                Live Sync via GitHub Chart API
               </div>
+              <a 
+                href="https://github.com/Doc3ric" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="group flex items-center gap-1.5 rounded-md border border-border bg-surface-2 px-3 py-1.5 text-xs font-medium text-foreground transition-colors hover:border-brand-blue/30 hover:text-brand-blue"
+              >
+                Visit GitHub Profile
+                <span className="transition-transform duration-200 group-hover:translate-x-0.5">&rarr;</span>
+              </a>
             </div>
           </motion.div>
 

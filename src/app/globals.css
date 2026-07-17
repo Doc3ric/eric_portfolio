@@ -241,12 +241,13 @@
     background-clip: text;
   }
 
-  /* Subtle gradient border using box-shadow */
+  /* Subtle gradient border using mask */
   .gradient-border {
-    border: 1px solid transparent;
-    background:
-      linear-gradient(oklch(0.11 0 0), oklch(0.11 0 0)) padding-box,
-      linear-gradient(135deg, oklch(0.60 0.22 250), oklch(0.58 0.24 290)) border-box;
+    padding: 1px;
+    background: linear-gradient(135deg, oklch(0.60 0.22 250), oklch(0.58 0.24 290));
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
   }
 
   /* Glass card effect */
