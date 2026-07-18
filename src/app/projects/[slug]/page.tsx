@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import { ArrowLeft, ExternalLink, Calendar, User, Users, Clock, Tag } from "lucide-react";
 import { getProjectBySlug, getAllProjectSlugs } from "@/lib/mdx";
@@ -252,16 +253,28 @@ export default async function ProjectCaseStudyPage({ params }: PageProps) {
 
               {/* Cover Image Placeholder */}
               <div className="relative h-64 sm:h-96 w-full rounded-2xl overflow-hidden bg-surface-2 border border-border flex items-center justify-center">
-                {/* Visual accent background */}
-                <div className="absolute inset-0 bg-gradient-to-br from-brand-blue/20 via-surface-2 to-brand-purple/20" />
-                <div className="relative z-10 flex flex-col items-center gap-2 opacity-50">
-                  <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-brand-blue to-brand-purple text-lg font-bold text-white shadow-lg">
-                    {frontmatter.title.charAt(0)}
-                  </span>
-                  <span className="text-xs font-medium text-muted-foreground">
-                    Project Cover Mockup
-                  </span>
-                </div>
+                {frontmatter.coverImage ? (
+                  <Image
+                    src={frontmatter.coverImage}
+                    alt={`${frontmatter.title} cover`}
+                    fill
+                    className="object-cover"
+                    priority
+                  />
+                ) : (
+                  <>
+                    {/* Visual accent background */}
+                    <div className="absolute inset-0 bg-gradient-to-br from-brand-blue/20 via-surface-2 to-brand-purple/20" />
+                    <div className="relative z-10 flex flex-col items-center gap-2 opacity-50">
+                      <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-brand-blue to-brand-purple text-lg font-bold text-white shadow-lg">
+                        {frontmatter.title.charAt(0)}
+                      </span>
+                      <span className="text-xs font-medium text-muted-foreground">
+                        Project Cover Mockup
+                      </span>
+                    </div>
+                  </>
+                )}
               </div>
 
               {/* Rendered MDX Content */}
