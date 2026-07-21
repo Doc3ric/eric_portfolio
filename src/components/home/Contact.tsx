@@ -1,20 +1,93 @@
 "use client";
 
-import { useState } from "react";
-import { motion, AnimatePresence } from "motion/react";
-import { Mail, MapPin, Calendar, Clock, Send, CheckCircle2, AlertCircle } from "lucide-react";
-import { cn } from "@/lib/utils";
-import { useInView } from "@/hooks/useInView";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { SectionHeader } from "@/components/shared/SectionHeader";
+import { useState, useRef } from "react";
+import { motion, AnimatePresence, useInView } from "motion/react";
+import { Mail, MapPin, Calendar, Clock, CheckCircle2, AlertCircle, ArrowUpRight } from "lucide-react";
 import { siteConfig } from "@/config/site.config";
 import { GitHubIcon, LinkedInIcon } from "@/components/shared/BrandIcons";
 import type { ContactFormData } from "@/types";
 
+// ─────────────────────────────────────────────────────────────────────────────
+// Section header
+// ─────────────────────────────────────────────────────────────────────────────
+function ContactHeader() {
+  const ref = useRef<HTMLDivElement>(null);
+  const inView = useInView(ref, { once: true, margin: "0px 0px -60px 0px" });
+
+  return (
+    <motion.div
+      ref={ref}
+      initial={{ opacity: 0, y: 20 }}
+      animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+      transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+      className="flex flex-col gap-4"
+    >
+      <p className="font-mono text-[10px] tracking-widest uppercase" style={{ color: "oklch(0.72 0.18 210)" }}>
+        — CONTACT —
+      </p>
+      <h2 className="font-sans text-[clamp(2rem,5vw,3.5rem)] font-bold leading-[1.0] tracking-[-0.03em] text-foreground">
+        Get In <span style={{ color: "oklch(0.72 0.18 210)" }}>Touch</span>
+      </h2>
+      <p className="mt-2 max-w-xl text-base leading-relaxed text-muted-foreground">
+        Have an opportunity, project in mind, or just want to chat? Reach out using the form below or contact me directly.
+      </p>
+    </motion.div>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Stacked Detail Item
+// ─────────────────────────────────────────────────────────────────────────────
+interface DetailItemProps {
+  label: string;
+  value: string;
+  href?: string;
+  icon: React.ElementType;
+  delay?: number;
+}
+
+function DetailItem({ label, value, href, icon: Icon, delay = 0 }: DetailItemProps) {
+  const ref = useRef<HTMLDivElement>(null);
+  const inView = useInView(ref, { once: true, margin: "0px 0px -40px 0px" });
+
+  const content = (
+    <motion.div
+      ref={ref}
+      initial={{ opacity: 0, y: 16 }}
+      animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 16 }}
+      transition={{ duration: 0.55, delay, ease: [0.16, 1, 0.3, 1] }}
+      className="flex flex-col gap-1.5"
+    >
+      <div className="flex items-center gap-1.5">
+        <Icon className="h-3.5 w-3.5 text-[oklch(0.45_0_0)]" />
+        <span className="font-mono text-[10px] tracking-widest uppercase text-[oklch(0.45_0_0)]">
+          {label}
+        </span>
+      </div>
+      <span className="font-sans text-base font-bold tracking-tight text-foreground transition-colors group-hover:text-[oklch(0.72_0.18_210)]">
+        {value}
+      </span>
+    </motion.div>
+  );
+
+  if (href) {
+    return (
+      <a href={href} target={href.startsWith("http") ? "_blank" : "_self"} rel="noopener noreferrer" className="group block w-fit">
+        {content}
+      </a>
+    );
+  }
+
+  return <div className="group block w-fit">{content}</div>;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Contact Section
+// ─────────────────────────────────────────────────────────────────────────────
 export function Contact() {
-  const { ref, inView } = useInView<HTMLDivElement>({ threshold: 0.1 });
+  const formRef = useRef<HTMLFormElement>(null);
+  const formInView = useInView(formRef, { once: true, margin: "0px 0px -60px 0px" });
+  
   const [formData, setFormData] = useState<ContactFormData>({
     name: "",
     email: "",
@@ -68,240 +141,178 @@ export function Contact() {
   };
 
   return (
-    <section id="contact" className="section bg-background" aria-label="Contact Section">
-      <div className="container-xl flex flex-col gap-12">
-        <SectionHeader
-          eyebrow="Contact"
-          heading="Get In"
-          highlight="Touch"
-          description="Have an opportunity, project in mind, or just want to chat? Reach out using the form below or contact me directly through my social channels."
-        />
+    <section id="contact" className="relative py-20 md:py-28" aria-label="Contact Section">
+      {/* Top rule */}
+      <div aria-hidden="true" className="absolute top-0 inset-x-0 h-px bg-[oklch(1_0_0/10%)]" />
 
-        <div ref={ref} className="grid grid-cols-1 gap-8 lg:grid-cols-5">
-          {/* Direct Details Side (2 columns) */}
-          <div className="flex flex-col gap-4 lg:col-span-2">
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              animate={inView ? { opacity: 1, x: 0 } : { opacity: 0, x: -20 }}
-              transition={{ duration: 0.5, delay: 0.1 }}
-              className="rounded-2xl border border-border bg-surface-1 p-6 flex flex-col gap-6"
-            >
-              <h3 className="font-bold text-foreground">Contact Details</h3>
-
-              <div className="flex flex-col gap-4">
-                {/* Email */}
-                <a
-                  href={`mailto:${siteConfig.email}`}
-                  className="flex items-center gap-3.5 rounded-lg border border-transparent p-2 hover:border-border hover:bg-surface-2 transition-all group"
-                >
-                  <div className="flex h-10 w-10 items-center justify-center rounded-lg border border-border bg-surface-2 group-hover:bg-background">
-                    <Mail className="h-4.5 w-4.5 text-brand-blue" />
-                  </div>
-                  <div className="flex flex-col">
-                    <span className="text-xs text-muted-foreground">Email Directly</span>
-                    <span className="text-sm font-medium text-foreground">{siteConfig.email}</span>
-                  </div>
-                </a>
-
-                {/* Location */}
-                <div className="flex items-center gap-3.5 p-2">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-lg border border-border bg-surface-2">
-                    <MapPin className="h-4.5 w-4.5 text-brand-blue" />
-                  </div>
-                  <div className="flex flex-col">
-                    <span className="text-xs text-muted-foreground">Location</span>
-                    <span className="text-sm font-medium text-foreground">{siteConfig.location}</span>
-                  </div>
-                </div>
-
-                {/* GitHub */}
-                <a
-                  href={siteConfig.github}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-3.5 rounded-lg border border-transparent p-2 hover:border-border hover:bg-surface-2 transition-all group"
-                >
-                  <div className="flex h-10 w-10 items-center justify-center rounded-lg border border-border bg-surface-2 group-hover:bg-background">
-                    <GitHubIcon className="h-4.5 w-4.5 text-brand-blue" />
-                  </div>
-                  <div className="flex flex-col">
-                    <span className="text-xs text-muted-foreground">GitHub Profile</span>
-                    <span className="text-sm font-medium text-foreground">github.com/Doc3ric</span>
-                  </div>
-                </a>
-
-                {/* LinkedIn */}
-                <a
-                  href={siteConfig.linkedin}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-3.5 rounded-lg border border-transparent p-2 hover:border-border hover:bg-surface-2 transition-all group"
-                >
-                  <div className="flex h-10 w-10 items-center justify-center rounded-lg border border-border bg-surface-2 group-hover:bg-background">
-                    <LinkedInIcon className="h-4.5 w-4.5 text-brand-blue" />
-                  </div>
-                  <div className="flex flex-col">
-                    <span className="text-xs text-muted-foreground">LinkedIn Profile</span>
-                    <span className="text-sm font-medium text-foreground">linkedin.com/in/alenton-eric</span>
-                  </div>
-                </a>
-              </div>
-            </motion.div>
-
-            {/* Availability Info */}
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              animate={inView ? { opacity: 1, x: 0 } : { opacity: 0, x: -20 }}
-              transition={{ duration: 0.5, delay: 0.2 }}
-              className="rounded-2xl border border-border bg-surface-1 p-6 flex flex-col gap-4"
-            >
-              <div className="flex items-center gap-3">
-                <div className="flex h-9 w-9 items-center justify-center rounded-lg border border-border bg-surface-2">
-                  <Clock className="h-4 w-4 text-brand-blue" />
-                </div>
-                <h3 className="font-bold text-foreground">Response Info</h3>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4 pt-2">
-                <div className="flex flex-col gap-1 border-r border-border pr-2">
-                  <span className="text-xs text-muted-foreground uppercase tracking-wider">Response Time</span>
-                  <span className="text-sm font-medium text-foreground">{siteConfig.contact.responseTime}</span>
-                </div>
-                <div className="flex flex-col gap-1 pl-2">
-                  <span className="text-xs text-muted-foreground uppercase tracking-wider">Timezone</span>
-                  <span className="text-sm font-medium text-foreground">{siteConfig.contact.timezone}</span>
-                </div>
-              </div>
-            </motion.div>
+      <div className="mx-auto w-full max-w-[80rem] px-6 sm:px-10 lg:px-14">
+        <div className="flex flex-col gap-16 lg:flex-row lg:gap-24">
+          
+          {/* ── Left Column: Contact Details ── */}
+          <div className="lg:w-[38%] lg:pt-1 flex flex-col gap-12">
+            <ContactHeader />
+            
+            {/* Primary Details */}
+            <div className="flex flex-col gap-8">
+              <DetailItem label="Email" value={siteConfig.email} href={`mailto:${siteConfig.email}`} icon={Mail} delay={0.1} />
+              <DetailItem label="Location" value={siteConfig.location} icon={MapPin} delay={0.15} />
+              <DetailItem label="GitHub" value="github.com/Doc3ric" href={siteConfig.github} icon={GitHubIcon} delay={0.2} />
+              <DetailItem label="LinkedIn" value="linkedin.com/in/alenton-eric" href={siteConfig.linkedin} icon={LinkedInIcon} delay={0.25} />
+            </div>
+            
+            {/* Short divider */}
+            <div className="h-px w-12 bg-[oklch(1_0_0/10%)]" aria-hidden="true" />
+            
+            {/* Response Info */}
+            <div className="flex flex-col gap-8">
+              <DetailItem label="Response Time" value={siteConfig.contact.responseTime} icon={Clock} delay={0.3} />
+              <DetailItem label="Timezone" value={siteConfig.contact.timezone} icon={Calendar} delay={0.35} />
+            </div>
           </div>
 
-          {/* Form Side (3 columns) */}
-          <div className="lg:col-span-3">
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              animate={inView ? { opacity: 1, x: 0 } : { opacity: 0, x: 20 }}
-              transition={{ duration: 0.5, delay: 0.2 }}
-              className="rounded-2xl border border-border bg-surface-1 p-6 flex flex-col gap-6"
+          {/* ── Right Column: Form ── */}
+          <div className="flex-1 lg:pt-1">
+            <motion.form
+              ref={formRef}
+              initial={{ opacity: 0, y: 20 }}
+              animate={formInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+              transition={{ duration: 0.7, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+              onSubmit={handleSubmit}
+              className="flex flex-col gap-10 lg:pl-10 lg:border-l lg:border-[oklch(1_0_0/10%)] lg:min-h-full"
             >
-              <h3 className="font-bold text-foreground">Send Message</h3>
-
-              <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-                {/* Form fields */}
-                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                  <div className="flex flex-col gap-2">
-                    <label htmlFor="name" className="text-xs font-medium text-muted-foreground">
-                      Your Name <span className="text-destructive">*</span>
-                    </label>
-                    <Input
-                      id="name"
-                      name="name"
-                      placeholder="Jane Doe"
-                      value={formData.name}
-                      onChange={handleChange}
-                      disabled={status === "submitting" || status === "success"}
-                      required
-                    />
-                  </div>
-                  <div className="flex flex-col gap-2">
-                    <label htmlFor="email" className="text-xs font-medium text-muted-foreground">
-                      Email Address <span className="text-destructive">*</span>
-                    </label>
-                    <Input
-                      id="email"
-                      name="email"
-                      type="email"
-                      placeholder="jane@example.com"
-                      value={formData.email}
-                      onChange={handleChange}
-                      disabled={status === "submitting" || status === "success"}
-                      required
-                    />
-                  </div>
-                </div>
-
+              <div className="grid grid-cols-1 gap-10 sm:grid-cols-2">
+                {/* Name */}
                 <div className="flex flex-col gap-2">
-                  <label htmlFor="subject" className="text-xs font-medium text-muted-foreground">
-                    Subject
+                  <label htmlFor="name" className="font-mono text-[10px] tracking-widest uppercase text-[oklch(0.45_0_0)]">
+                    Your Name <span style={{ color: "oklch(0.72 0.18 210)" }}>*</span>
                   </label>
-                  <Input
-                    id="subject"
-                    name="subject"
-                    placeholder="Project Inquiry / Job Opportunity"
-                    value={formData.subject}
-                    onChange={handleChange}
-                    disabled={status === "submitting" || status === "success"}
-                  />
-                </div>
-
-                <div className="flex flex-col gap-2">
-                  <label htmlFor="message" className="text-xs font-medium text-muted-foreground">
-                    Message <span className="text-destructive">*</span>
-                  </label>
-                  <Textarea
-                    id="message"
-                    name="message"
-                    rows={5}
-                    placeholder="Hi Eric, I'd like to discuss a project..."
-                    value={formData.message}
+                  <input
+                    id="name"
+                    name="name"
+                    type="text"
+                    placeholder="Jane Doe"
+                    value={formData.name}
                     onChange={handleChange}
                     disabled={status === "submitting" || status === "success"}
                     required
+                    className="w-full border-0 border-b border-[oklch(1_0_0/10%)] bg-transparent px-0 py-2.5 text-base text-foreground placeholder:text-[oklch(1_0_0/25%)] focus:border-[oklch(0.72_0.18_210)] focus:outline-none focus:ring-0 transition-colors disabled:opacity-50"
                   />
                 </div>
-
-                {/* Submitting Status / Alerts */}
-                <AnimatePresence mode="wait">
-                  {status === "success" && (
-                    <motion.div
-                      initial={{ opacity: 0, height: 0 }}
-                      animate={{ opacity: 1, height: "auto" }}
-                      exit={{ opacity: 0, height: 0 }}
-                      className="flex items-center gap-2.5 rounded-lg border border-status-production/30 bg-status-production/10 p-3 text-sm text-status-production"
-                    >
-                      <CheckCircle2 className="h-4.5 w-4.5 shrink-0" />
-                      <span>Thank you! Your message was sent successfully.</span>
-                    </motion.div>
-                  )}
-
-                  {status === "error" && (
-                    <motion.div
-                      initial={{ opacity: 0, height: 0 }}
-                      animate={{ opacity: 1, height: "auto" }}
-                      exit={{ opacity: 0, height: 0 }}
-                      className="flex items-center gap-2.5 rounded-lg border border-destructive/30 bg-destructive/10 p-3 text-sm text-destructive"
-                    >
-                      <AlertCircle className="h-4.5 w-4.5 shrink-0" />
-                      <span>{errorMessage}</span>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-
-                {/* Submit button */}
-                <div className="flex justify-end pt-2">
-                  <Button
-                    type="submit"
-                    className="w-full sm:w-auto gap-2 bg-gradient-to-r from-brand-blue to-brand-purple hover:opacity-90 text-white"
+                
+                {/* Email */}
+                <div className="flex flex-col gap-2">
+                  <label htmlFor="email" className="font-mono text-[10px] tracking-widest uppercase text-[oklch(0.45_0_0)]">
+                    Email Address <span style={{ color: "oklch(0.72 0.18 210)" }}>*</span>
+                  </label>
+                  <input
+                    id="email"
+                    name="email"
+                    type="email"
+                    placeholder="jane@example.com"
+                    value={formData.email}
+                    onChange={handleChange}
                     disabled={status === "submitting" || status === "success"}
-                  >
-                    {status === "submitting" ? (
-                      <>
-                        <motion.div
-                          animate={{ rotate: 360 }}
-                          transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
-                          className="h-4 w-4 border-2 border-background border-t-transparent rounded-full"
-                        />
-                        Sending...
-                      </>
-                    ) : (
-                      <>
-                        <Send className="h-4 w-4" />
-                        Send Message
-                      </>
-                    )}
-                  </Button>
+                    required
+                    className="w-full border-0 border-b border-[oklch(1_0_0/10%)] bg-transparent px-0 py-2.5 text-base text-foreground placeholder:text-[oklch(1_0_0/25%)] focus:border-[oklch(0.72_0.18_210)] focus:outline-none focus:ring-0 transition-colors disabled:opacity-50"
+                  />
                 </div>
-              </form>
-            </motion.div>
+              </div>
+
+              {/* Subject */}
+              <div className="flex flex-col gap-2">
+                <label htmlFor="subject" className="font-mono text-[10px] tracking-widest uppercase text-[oklch(0.45_0_0)]">
+                  Subject
+                </label>
+                <input
+                  id="subject"
+                  name="subject"
+                  type="text"
+                  placeholder="Project Inquiry"
+                  value={formData.subject}
+                  onChange={handleChange}
+                  disabled={status === "submitting" || status === "success"}
+                  className="w-full border-0 border-b border-[oklch(1_0_0/10%)] bg-transparent px-0 py-2.5 text-base text-foreground placeholder:text-[oklch(1_0_0/25%)] focus:border-[oklch(0.72_0.18_210)] focus:outline-none focus:ring-0 transition-colors disabled:opacity-50"
+                />
+              </div>
+
+              {/* Message */}
+              <div className="flex flex-col gap-2">
+                <label htmlFor="message" className="font-mono text-[10px] tracking-widest uppercase text-[oklch(0.45_0_0)]">
+                  Message <span style={{ color: "oklch(0.72 0.18 210)" }}>*</span>
+                </label>
+                <textarea
+                  id="message"
+                  name="message"
+                  rows={4}
+                  placeholder="Hi Eric, I'd like to discuss..."
+                  value={formData.message}
+                  onChange={handleChange}
+                  disabled={status === "submitting" || status === "success"}
+                  required
+                  className="w-full resize-none border-0 border-b border-[oklch(1_0_0/10%)] bg-transparent px-0 py-2.5 text-base text-foreground placeholder:text-[oklch(1_0_0/25%)] focus:border-[oklch(0.72_0.18_210)] focus:outline-none focus:ring-0 transition-colors disabled:opacity-50"
+                />
+              </div>
+
+              {/* Status / Submit Row */}
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 pt-4">
+                
+                {/* Alerts Area */}
+                <div className="flex-1 min-h-[3rem] flex items-center">
+                  <AnimatePresence mode="wait">
+                    {status === "success" && (
+                      <motion.div
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -10 }}
+                        className="flex items-center gap-2.5 text-sm"
+                        style={{ color: "oklch(0.72 0.18 210)" }}
+                      >
+                        <CheckCircle2 className="h-4.5 w-4.5 shrink-0" />
+                        <span>Thank you! Your message was sent successfully.</span>
+                      </motion.div>
+                    )}
+
+                    {status === "error" && (
+                      <motion.div
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -10 }}
+                        className="flex items-center gap-2.5 text-sm text-destructive"
+                      >
+                        <AlertCircle className="h-4.5 w-4.5 shrink-0" />
+                        <span>{errorMessage}</span>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+
+                {/* Submit Button */}
+                <button
+                  type="submit"
+                  disabled={status === "submitting" || status === "success"}
+                  className="group/btn inline-flex items-center justify-center sm:justify-start gap-2 font-mono text-[10px] tracking-widest uppercase font-semibold text-foreground transition-colors hover:text-[oklch(0.72_0.18_210)] disabled:opacity-50 disabled:hover:text-foreground shrink-0"
+                >
+                  {status === "submitting" ? (
+                    <>
+                      <motion.div
+                        animate={{ rotate: 360 }}
+                        transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
+                        className="h-3.5 w-3.5 border border-current border-t-transparent rounded-full"
+                      />
+                      Sending
+                    </>
+                  ) : (
+                    <>
+                      Send Message
+                      <ArrowUpRight
+                        className="h-3.5 w-3.5 transition-transform group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5"
+                        aria-hidden="true"
+                      />
+                    </>
+                  )}
+                </button>
+              </div>
+            </motion.form>
           </div>
         </div>
       </div>

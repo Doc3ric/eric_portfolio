@@ -1,246 +1,270 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useTheme } from "next-themes";
 import { GitHubCalendar } from "react-github-calendar";
-import { motion } from "motion/react";
-import { GitBranch, GitCommit, GitPullRequest, Code2, Sparkles, Terminal, Activity, Calendar } from "lucide-react";
-import { cn } from "@/lib/utils";
-import { useInView } from "@/hooks/useInView";
+import { motion, useInView } from "motion/react";
+import { ArrowUpRight } from "lucide-react";
 import homeData from "@/content/home.json";
-import { SectionHeader } from "@/components/shared/SectionHeader";
+import { siteConfig } from "@/config/site.config";
 import type { DeveloperActivity as ActivityType } from "@/types";
 
 const activity = homeData as ActivityType;
 
+// ─────────────────────────────────────────────────────────────────────────────
+// Single stat — large plain number + small mono label, no box
+// ─────────────────────────────────────────────────────────────────────────────
+interface StatProps {
+  value: string | number;
+  label: string;
+  index: number;
+}
+
+function Stat({ value, label, index }: StatProps) {
+  const ref = useRef<HTMLDivElement>(null);
+  const inView = useInView(ref, { once: true, margin: "0px 0px -40px 0px" });
+
+  return (
+    <motion.div
+      ref={ref}
+      initial={{ opacity: 0, y: 16 }}
+      animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 16 }}
+      transition={{
+        duration: 0.55,
+        delay: index * 0.07,
+        ease: [0.16, 1, 0.3, 1],
+      }}
+      className="flex flex-col gap-1"
+    >
+      <span
+        className="font-sans text-[clamp(1.75rem,4vw,2.5rem)] font-bold leading-none tracking-tight tabular-nums"
+        style={{ color: "oklch(0.72 0.18 210)" }} // single accent — cyan
+      >
+        {value}
+      </span>
+      <span className="font-mono text-[10px] tracking-widest uppercase text-[oklch(0.45_0_0)]">
+        {label}
+      </span>
+    </motion.div>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Section header
+// ─────────────────────────────────────────────────────────────────────────────
+function ActivityHeader() {
+  const ref = useRef<HTMLDivElement>(null);
+  const inView = useInView(ref, { once: true, margin: "0px 0px -60px 0px" });
+
+  return (
+    <motion.div
+      ref={ref}
+      initial={{ opacity: 0, y: 20 }}
+      animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+      transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+      className="flex flex-col gap-4"
+    >
+      <p className="font-mono text-[10px] tracking-widest uppercase" style={{ color: "oklch(0.72 0.18 210)" }}>
+        — ACTIVITY —
+      </p>
+      <h2 className="font-sans text-[clamp(2rem,5vw,3.5rem)] font-bold leading-[1.0] tracking-[-0.03em] text-foreground">
+        Developer{" "}
+        <span className="text-foreground/40">Activity</span>
+      </h2>
+      <p className="mt-2 max-w-xl text-base leading-relaxed text-muted-foreground">
+        Live metrics and commit activity — pulled directly from GitHub.
+      </p>
+    </motion.div>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// DeveloperActivity section
+// ─────────────────────────────────────────────────────────────────────────────
 export function DeveloperActivity() {
-  const { ref, inView } = useInView<HTMLDivElement>({ threshold: 0.1 });
   const { resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
-  
+  const calendarRef = useRef<HTMLDivElement>(null);
+  const calendarInView = useInView(calendarRef, {
+    once: true,
+    margin: "0px 0px -60px 0px",
+  });
+
   useEffect(() => {
     setMounted(true);
   }, []);
 
+  const stats = [
+    { value: activity.productionSystems, label: "Production Apps" },
+    { value: activity.repositories, label: "Repositories" },
+    { value: activity.openSource, label: "Open Source" },
+    { value: `${activity.yearsActive}+`, label: "Years Active" },
+  ];
 
   return (
-    <section id="activity" className="section" aria-label="Developer Activity">
-      <div className="container-xl flex flex-col gap-12">
-        <SectionHeader
-          eyebrow="Activity"
-          heading="Developer"
-          highlight="Activity Dashboard"
-          description="A centralized overview of my current projects, production systems, and coding metrics. Kept up to date to showcase active development."
-        />
+    <section
+      id="activity"
+      aria-label="Developer Activity"
+      className="relative py-20 md:py-28"
+    >
+      {/* Top rule */}
+      <div
+        aria-hidden="true"
+        className="absolute top-0 inset-x-0 h-px bg-[oklch(1_0_0/10%)]"
+      />
 
-        {/* Bento Grid */}
-        <div ref={ref} className="grid grid-cols-1 gap-4 md:grid-cols-3">
-          {/* Card 1: Current Focus & Latest Project */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-            transition={{ duration: 0.5, delay: 0.1 }}
-            className="md:col-span-2 rounded-2xl border border-border bg-surface-1 p-6 flex flex-col justify-between gap-6"
-          >
-            <div className="flex flex-col gap-4">
-              <div className="flex items-center gap-2">
-                <span className="relative flex h-2 w-2">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-blue opacity-75" />
-                  <span className="relative inline-flex h-2 w-2 rounded-full bg-brand-blue" />
-                </span>
-                <span className="text-xs font-semibold uppercase tracking-widest text-brand-blue">
-                  Current Focus
-                </span>
-              </div>
+      <div className="mx-auto w-full max-w-[80rem] px-6 sm:px-10 lg:px-14 flex flex-col gap-16">
 
-              <div>
-                <h3 className="text-lg font-bold text-foreground">
-                  Building: {activity.latestProject}
-                </h3>
-                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-                  {activity.currentFocus}
-                </p>
-              </div>
-            </div>
+        {/* ── Header + stats row ── */}
+        <div className="flex flex-col gap-16 lg:flex-row lg:items-start lg:gap-24">
 
-            <div className="flex items-center gap-2 text-xs text-muted-foreground border-t border-border pt-4">
-              <Activity className="h-3.5 w-3.5" />
-              <span>Active development in progress</span>
-            </div>
-          </motion.div>
+          {/* Left — section header + availability */}
+          <div className="lg:w-[38%] lg:pt-1 flex flex-col gap-8">
+            <ActivityHeader />
 
-          {/* Card 2: Availability */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-            className="rounded-2xl border border-border bg-surface-1 p-6 flex flex-col justify-between gap-6"
-          >
-            <div className="flex flex-col gap-4">
-              <div className="flex items-center gap-2">
-                <span className="text-xs font-semibold uppercase tracking-widest text-status-production">
-                  Status
-                </span>
-              </div>
-
-              <div>
-                <h3 className="text-lg font-bold text-foreground">Availability</h3>
-                <div className="mt-3 inline-flex items-center gap-2 rounded-full border border-status-production/30 bg-status-production/10 px-3.5 py-1.5 text-sm font-semibold text-status-production">
-                  <span className="relative flex h-2 w-2">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-status-production opacity-75" />
-                    <span className="relative inline-flex h-2 w-2 rounded-full bg-status-production" />
+            {/* Availability — plain dot treatment, matches hero */}
+            <div className="flex flex-col gap-1.5">
+              <p className="font-mono text-[10px] tracking-widest uppercase text-[oklch(0.45_0_0)]">
+                Status
+              </p>
+              {siteConfig.availability ? (
+                <span className="flex items-center gap-2 text-sm text-muted-foreground">
+                  <span className="relative flex h-1.5 w-1.5 shrink-0">
+                    <span
+                      className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-60"
+                      style={{ backgroundColor: "oklch(0.65 0.18 145)" }}
+                    />
+                    <span
+                      className="relative inline-flex h-1.5 w-1.5 rounded-full"
+                      style={{ backgroundColor: "oklch(0.65 0.18 145)" }}
+                    />
                   </span>
-                  Freelance &amp; Remote
-                </div>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-2 text-xs text-muted-foreground border-t border-border pt-4">
-              <Calendar className="h-3.5 w-3.5" />
-              <span>Last updated: {activity.lastUpdated}</span>
-            </div>
-          </motion.div>
-
-          {/* Card 3: Contribution Heatmap */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-            transition={{ duration: 0.5, delay: 0.3 }}
-            className="md:col-span-2 rounded-2xl border border-border bg-surface-1 p-6 flex flex-col gap-6"
-          >
-            <div className="flex flex-col gap-2">
-              <div>
-                <div className="flex items-center gap-2">
-                  <Terminal className="h-4 w-4 text-brand-blue" />
-                  <span className="text-xs font-semibold uppercase tracking-widest text-foreground">
-                    Open Source Activity
-                  </span>
-                </div>
-                <p className="text-sm text-muted-foreground mt-1">
-                  Tracking my recent development updates and repository activity on GitHub.
-                </p>
-              </div>
-            </div>
-
-            <div className="flex flex-col items-center justify-center min-h-[160px] overflow-hidden rounded-xl bg-surface-2/30 p-4">
-              {mounted ? (
-                <div className="max-w-full overflow-x-auto pb-2 -mx-2 px-2 scrollbar-thin">
-                  <GitHubCalendar 
-                    username="Doc3ric"
-                    colorScheme={resolvedTheme === "dark" ? "dark" : "light"}
-                    theme={{
-                      light: ['#ebedf0', '#bae6fd', '#7dd3fc', '#38bdf8', '#0284c7'],
-                      dark: ['#1e1e24', '#0ea5e940', '#0ea5e970', '#0ea5e9a0', '#0ea5e9']
-                    }}
-                    transformData={(contributions) => contributions.slice(-150)}
-                  />
-                </div>
+                  {siteConfig.availabilityLabel}
+                </span>
               ) : (
-                <div className="h-[120px] w-full animate-pulse rounded-lg bg-surface-3/50" />
+                <span className="flex items-center gap-2 text-sm text-muted-foreground">
+                  <span className="relative flex h-1.5 w-1.5 shrink-0">
+                    <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-[oklch(0.4_0_0)]" />
+                  </span>
+                  Not available at this time
+                </span>
               )}
             </div>
 
-            <div className="flex items-center justify-between border-t border-border pt-4">
-              <div className="flex items-center gap-2 text-xs font-medium text-status-production">
-                <span className="relative flex h-2 w-2">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-status-production opacity-75" />
-                  <span className="relative inline-flex h-2 w-2 rounded-full bg-status-production" />
-                </span>
-                Live Sync via GitHub Chart API
-              </div>
-              <a 
-                href="https://github.com/Doc3ric" 
-                target="_blank" 
-                rel="noopener noreferrer" 
-                className="group flex items-center gap-1.5 rounded-md border border-border bg-surface-2 px-3 py-1.5 text-xs font-medium text-foreground transition-colors hover:border-brand-blue/30 hover:text-brand-blue"
-              >
-                Visit GitHub Profile
-                <span className="transition-transform duration-200 group-hover:translate-x-0.5">&rarr;</span>
-              </a>
+            {/* Current focus */}
+            <div className="flex flex-col gap-1.5">
+              <p className="font-mono text-[10px] tracking-widest uppercase text-[oklch(0.45_0_0)]">
+                Currently Building
+              </p>
+              <p className="text-sm leading-relaxed text-muted-foreground">
+                {activity.latestProject} —{" "}
+                <span className="text-foreground/70">{activity.currentFocus}</span>
+              </p>
             </div>
-          </motion.div>
+          </div>
 
-          {/* Card 4: Mini Stats Bento */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-            transition={{ duration: 0.5, delay: 0.4 }}
-            className="rounded-2xl border border-border bg-surface-1 p-6 flex flex-col justify-between gap-4"
-          >
-            <div className="flex items-center gap-2">
-              <Sparkles className="h-4 w-4 text-brand-purple" />
-              <span className="text-xs font-semibold uppercase tracking-widest text-muted-foreground/80">
-                Core Metrics
-              </span>
-            </div>
+          {/* Right — stats row */}
+          <div className="flex-1 flex flex-col gap-10">
+            {/* Hairline above stats */}
+            <div className="h-px bg-[oklch(1_0_0/10%)]" aria-hidden="true" />
 
-            <div className="grid grid-cols-2 gap-4">
-              <div className="flex flex-col gap-1 border-r border-border pr-2">
-                <span className="text-2xl font-bold text-foreground">
-                  {activity.productionSystems}
-                </span>
-                <span className="text-[10px] text-muted-foreground uppercase tracking-wider">
-                  Production Apps
-                </span>
-              </div>
-              <div className="flex flex-col gap-1 pl-2">
-                <span className="text-2xl font-bold text-foreground">
-                  {activity.repositories}
-                </span>
-                <span className="text-[10px] text-muted-foreground uppercase tracking-wider">
-                  Repositories
-                </span>
-              </div>
-              <div className="flex flex-col gap-1 border-r border-border border-t pt-4 pr-2">
-                <span className="text-2xl font-bold text-foreground">
-                  {activity.openSource}
-                </span>
-                <span className="text-[10px] text-muted-foreground uppercase tracking-wider">
-                  Open Source
-                </span>
-              </div>
-              <div className="flex flex-col gap-1 border-t pt-4 pl-2">
-                <span className="text-2xl font-bold text-foreground">
-                  {activity.yearsActive}
-                </span>
-                <span className="text-[10px] text-muted-foreground uppercase tracking-wider">
-                  Years Active
-                </span>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground mt-2">
-              <GitCommit className="h-3 w-3" />
-              <span>Verifiable on GitHub</span>
-            </div>
-          </motion.div>
-
-          {/* Card 5: Recent Technologies */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-            transition={{ duration: 0.5, delay: 0.5 }}
-            className="md:col-span-3 rounded-2xl border border-border bg-surface-1 p-6 flex flex-col gap-4"
-          >
-            <div className="flex items-center gap-2">
-              <Code2 className="h-4 w-4 text-brand-blue" />
-              <span className="text-xs font-semibold uppercase tracking-widest text-muted-foreground/80">
-                Recent Technologies Active In Commits
-              </span>
-            </div>
-
-            <div className="flex flex-wrap gap-2 pt-2">
-              {activity.recentTechnologies.map((tech) => (
-                <span
-                  key={tech}
-                  className="rounded-full border border-border bg-surface-2 px-3.5 py-1 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors"
-                >
-                  {tech}
-                </span>
+            {/* 4-stat row — same bare treatment as project metrics */}
+            <div className="grid grid-cols-2 gap-x-10 gap-y-8 sm:grid-cols-4">
+              {stats.map((s, i) => (
+                <Stat key={s.label} value={s.value} label={s.label} index={i} />
               ))}
             </div>
-          </motion.div>
+
+            {/* Recent technologies — inline text, not chips */}
+            <div className="flex flex-col gap-2">
+              <p className="font-mono text-[10px] tracking-widest uppercase text-[oklch(0.45_0_0)]">
+                Recent in Commits
+              </p>
+              <p className="font-mono text-sm text-[oklch(0.5_0_0)]">
+                {activity.recentTechnologies.join(" · ")}
+              </p>
+            </div>
+
+            {/* Hairline below */}
+            <div className="h-px bg-[oklch(1_0_0/10%)]" aria-hidden="true" />
+          </div>
         </div>
+
+        {/* ── GitHub Contribution Calendar ── */}
+        <motion.div
+          ref={calendarRef}
+          initial={{ opacity: 0, y: 24 }}
+          animate={
+            calendarInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 24 }
+          }
+          transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+          className="flex flex-col gap-6"
+        >
+          {/* Calendar label row */}
+          <div className="flex items-center justify-between">
+            <p className="font-mono text-[10px] tracking-widest uppercase text-[oklch(0.45_0_0)]">
+              GitHub Contribution Activity
+            </p>
+            <a
+              href={siteConfig.github}
+              target="_blank"
+              rel="noopener noreferrer"
+              id="activity-github-link"
+              className="group inline-flex items-center gap-1.5 font-mono text-[10px] tracking-widest uppercase text-[oklch(0.45_0_0)] transition-colors hover:text-foreground"
+            >
+              Visit Profile
+              <ArrowUpRight
+                className="h-3 w-3 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+                aria-hidden="true"
+              />
+            </a>
+          </div>
+
+          {/* Hairline above graph */}
+          <div className="h-px bg-[oklch(1_0_0/10%)]" aria-hidden="true" />
+
+          {/* Calendar — transparent background, no border container */}
+          <div className="overflow-x-auto pb-1">
+            {mounted ? (
+              <GitHubCalendar
+                username="Doc3ric"
+                colorScheme="dark"
+                theme={{
+                  dark: [
+                    "oklch(0.15 0 0)",      // empty — very muted
+                    "oklch(0.55 0.10 210)",  // low
+                    "oklch(0.62 0.14 210)",  // mid-low
+                    "oklch(0.68 0.17 210)",  // mid-high
+                    "oklch(0.72 0.18 210)",  // peak — matches site accent
+                  ],
+                }}
+                transformData={(contributions) => contributions.slice(-180)}
+                style={{
+                  color: "oklch(0.45 0 0)", // month/day labels in muted gray
+                  fontFamily: "var(--font-mono, monospace)",
+                  fontSize: "11px",
+                }}
+                hideTotalCount={false}
+                hideColorLegend={false}
+              />
+            ) : (
+              // Skeleton placeholder — same proportions as calendar
+              <div className="h-[120px] w-full animate-pulse rounded-sm bg-[oklch(0.12_0_0)]" />
+            )}
+          </div>
+
+          {/* Hairline below + footnote */}
+          <div className="h-px bg-[oklch(1_0_0/10%)]" aria-hidden="true" />
+
+          <div className="flex items-center justify-between">
+            <p className="font-mono text-[10px] tracking-widest uppercase text-[oklch(0.35_0_0)]">
+              Live sync · Verifiable on GitHub
+            </p>
+            <p className="font-mono text-[10px] tracking-widest uppercase text-[oklch(0.35_0_0)]">
+              Last updated {activity.lastUpdated}
+            </p>
+          </div>
+        </motion.div>
       </div>
     </section>
   );

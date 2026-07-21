@@ -1,30 +1,44 @@
 "use client";
 
-import { motion } from "motion/react";
-import { MapPin, Calendar } from "lucide-react";
-import { cn } from "@/lib/utils";
-import { useInView } from "@/hooks/useInView";
+import { useRef } from "react";
+import { motion, useInView } from "motion/react";
 import { formatDate } from "@/lib/utils";
 import experienceData from "@/content/experience.json";
-import { SectionHeader } from "@/components/shared/SectionHeader";
 import type { ExperienceEntry } from "@/types";
 
 const entries = experienceData as ExperienceEntry[];
 
-const typeStyles: Record<string, string> = {
-  "full-time": "text-status-production border-status-production/40 bg-status-production/10",
-  freelance: "text-brand-blue border-brand-blue/40 bg-brand-blue/10",
-  contract: "text-brand-purple border-brand-purple/40 bg-brand-purple/10",
-  education: "text-muted-foreground border-border bg-surface-2",
-};
+// ─────────────────────────────────────────────────────────────────────────────
+// Section header
+// ─────────────────────────────────────────────────────────────────────────────
+function ExperienceHeader() {
+  const ref = useRef<HTMLDivElement>(null);
+  const inView = useInView(ref, { once: true, margin: "0px 0px -60px 0px" });
 
-const typeLabels: Record<string, string> = {
-  "full-time": "Full-time",
-  freelance: "Freelance",
-  contract: "Contract",
-  education: "Education",
-};
+  return (
+    <motion.div
+      ref={ref}
+      initial={{ opacity: 0, y: 20 }}
+      animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+      transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+      className="flex flex-col gap-4"
+    >
+      <p className="font-mono text-[10px] tracking-widest uppercase" style={{ color: "oklch(0.72 0.18 210)" }}>
+        — EXPERIENCE —
+      </p>
+      <h2 className="font-sans text-[clamp(2rem,5vw,3.5rem)] font-bold leading-[1.0] tracking-[-0.03em] text-foreground">
+        Where I've <span style={{ color: "oklch(0.72 0.18 210)" }}>Made an Impact</span>
+      </h2>
+      <p className="mt-2 max-w-xl text-base leading-relaxed text-muted-foreground">
+        From government systems to freelance projects — every role has been about building things that work in the real world.
+      </p>
+    </motion.div>
+  );
+}
 
+// ─────────────────────────────────────────────────────────────────────────────
+// Timeline item
+// ─────────────────────────────────────────────────────────────────────────────
 interface TimelineItemProps {
   entry: ExperienceEntry;
   index: number;
@@ -32,139 +46,134 @@ interface TimelineItemProps {
 }
 
 function TimelineItem({ entry, index, isLast }: TimelineItemProps) {
-  const { ref, inView } = useInView<HTMLDivElement>({ threshold: 0.15 });
+  const ref = useRef<HTMLDivElement>(null);
+  const inView = useInView(ref, { once: true, margin: "0px 0px -60px 0px" });
+
+  // Format metadata: JAN 2024 — JUL 2024 · MALAYBALAY CITY · CONTRACT
+  const dateString = `${formatDate(entry.startDate)} — ${formatDate(entry.endDate)}`.toUpperCase();
+  const locationString = entry.location ? ` · ${entry.location.toUpperCase()}` : "";
+  
+  // Clean up type string (e.g. "full-time" -> "FULL TIME")
+  let typeString = "";
+  if (entry.type && entry.type !== "education") {
+    typeString = ` · ${entry.type.replace("-", " ").toUpperCase()}`;
+  }
 
   return (
-    <div ref={ref} className="relative flex gap-6">
-      {/* Timeline line + dot */}
-      <div className="flex flex-col items-center">
-        <motion.div
-          initial={{ scale: 0, opacity: 0 }}
-          animate={inView ? { scale: 1, opacity: 1 } : { scale: 0, opacity: 0 }}
-          transition={{ delay: index * 0.1, duration: 0.3 }}
-          className={cn(
-            "relative z-10 mt-1 flex h-4 w-4 shrink-0 items-center justify-center rounded-full border-2",
-            entry.type === "education"
-              ? "border-muted-foreground/40 bg-surface-2"
-              : "border-brand-blue bg-brand-blue/20"
-          )}
-        >
-          <div
-            className={cn(
-              "h-1.5 w-1.5 rounded-full",
-              entry.type === "education" ? "bg-muted-foreground/60" : "bg-brand-blue"
-            )}
-          />
-        </motion.div>
-
-        {/* Vertical line */}
+    <motion.div
+      ref={ref}
+      initial={{ opacity: 0, y: 20 }}
+      animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+      transition={{
+        duration: 0.6,
+        delay: index * 0.07,
+        ease: [0.16, 1, 0.3, 1],
+      }}
+      className="relative grid grid-cols-[2rem_1fr] gap-x-8 sm:grid-cols-[3.5rem_1fr] md:gap-x-10"
+    >
+      {/* ── Left: dot and vertical rule ── */}
+      <div className="flex flex-col items-center pt-2.5">
+        {/* Minimal dot */}
+        <div className="h-1.5 w-1.5 rounded-full bg-[oklch(0.45_0_0)]" />
+        
+        {/* Vertical rule connector */}
         {!isLast && (
           <motion.div
-            initial={{ scaleY: 0 }}
+            className="mt-3.5 w-px flex-1 bg-[oklch(1_0_0/10%)]"
+            initial={{ scaleY: 0, originY: 0 }}
             animate={inView ? { scaleY: 1 } : { scaleY: 0 }}
-            transition={{ delay: index * 0.1 + 0.2, duration: 0.4, ease: "easeOut" }}
-            style={{ originY: 0 }}
-            className="mt-2 w-px flex-1 bg-gradient-to-b from-border to-transparent"
+            transition={{
+              duration: 0.6,
+              delay: index * 0.07 + 0.25,
+              ease: [0.16, 1, 0.3, 1],
+            }}
+            style={{ minHeight: "2.5rem" }}
           />
         )}
       </div>
 
-      {/* Content card */}
-      <motion.div
-        initial={{ opacity: 0, x: -16 }}
-        animate={inView ? { opacity: 1, x: 0 } : { opacity: 0, x: -16 }}
-        transition={{ delay: index * 0.1 + 0.1, duration: 0.4, ease: [0.25, 0.1, 0.25, 1] }}
-        className={cn(
-          "mb-10 flex-1 rounded-2xl border border-border bg-surface-1 p-6",
-          "transition-all duration-300 hover:border-border hover:shadow-md hover:shadow-black/20"
-        )}
-      >
-        {/* Header */}
-        <div className="flex flex-wrap items-start justify-between gap-3">
-          <div className="flex flex-col gap-1">
-            <h3 className="font-semibold leading-tight">{entry.role}</h3>
-            <p className="text-sm font-medium text-muted-foreground">{entry.company}</p>
-          </div>
-
-          <span
-            className={cn(
-              "rounded-full border px-2.5 py-0.5 text-xs font-medium",
-              typeStyles[entry.type]
-            )}
-          >
-            {typeLabels[entry.type]}
-          </span>
+      {/* ── Right: content ── */}
+      <div className="pb-12 md:pb-16 flex flex-col gap-5">
+        
+        {/* Header Block */}
+        <div className="flex flex-col gap-1.5">
+          <h3 className="font-sans text-lg font-bold leading-tight tracking-tight text-foreground sm:text-xl">
+            {entry.role}
+          </h3>
+          <p className="text-base font-medium text-muted-foreground/80">
+            {entry.company}
+          </p>
+          <p className="mt-1 font-mono text-[10px] tracking-widest uppercase text-[oklch(0.45_0_0)]">
+            {dateString}{locationString}{typeString}
+          </p>
         </div>
 
-        {/* Meta row */}
-        <div className="mt-3 flex flex-wrap gap-4 text-xs text-muted-foreground">
-          <span className="flex items-center gap-1">
-            <Calendar className="h-3 w-3" />
-            {formatDate(entry.startDate)} — {formatDate(entry.endDate)}
-          </span>
-          {entry.location && (
-            <span className="flex items-center gap-1">
-              <MapPin className="h-3 w-3" />
-              {entry.location}
-            </span>
+        {/* Description / Achievements paragraph */}
+        <div className="max-w-2xl text-base leading-relaxed text-muted-foreground space-y-3">
+          {entry.description && <p>{entry.description}</p>}
+          
+          {/* Fold highlights into a flowing paragraph with dashes */}
+          {entry.highlights && entry.highlights.length > 0 && (
+            <p className="text-muted-foreground/90">
+              {entry.highlights.map((h, i) => (
+                <span key={i}>
+                  {i > 0 && " — "}{h}
+                </span>
+              ))}
+            </p>
           )}
         </div>
 
-        {/* Description */}
-        <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
-          {entry.description}
-        </p>
-
-        {/* Highlights */}
-        {entry.highlights && entry.highlights.length > 0 && (
-          <ul className="mt-4 flex flex-col gap-1.5">
-            {entry.highlights.map((h) => (
-              <li key={h} className="flex items-start gap-2 text-sm text-muted-foreground">
-                <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-brand-blue" />
-                {h}
-              </li>
-            ))}
-          </ul>
-        )}
-
-        {/* Tech stack pills */}
+        {/* Tech Stack */}
         {entry.techStack && entry.techStack.length > 0 && (
-          <div className="mt-4 flex flex-wrap gap-2">
-            {entry.techStack.map((tech) => (
-              <span
-                key={tech}
-                className="rounded-full border border-border bg-surface-2 px-2.5 py-0.5 text-xs text-muted-foreground"
-              >
-                {tech}
-              </span>
-            ))}
+          <div className="mt-2">
+            <p className="mb-1.5 font-mono text-[10px] tracking-widest uppercase text-[oklch(0.4_0_0)]">
+              Stack
+            </p>
+            <p className="font-mono text-sm text-[oklch(0.5_0_0)]">
+              {entry.techStack.join(" · ")}
+            </p>
           </div>
         )}
-      </motion.div>
-    </div>
+
+        {/* Horizontal hairline divider separating entries */}
+        {!isLast && (
+           <div className="mt-8 h-px w-full max-w-2xl bg-[oklch(1_0_0/10%)]" aria-hidden="true" />
+        )}
+      </div>
+    </motion.div>
   );
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+// Experience Section
+// ─────────────────────────────────────────────────────────────────────────────
 export function Experience() {
   return (
-    <section id="experience" className="section" aria-label="Experience">
-      <div className="container-xl flex flex-col gap-12">
-        <SectionHeader
-          eyebrow="Experience"
-          heading="Where I've"
-          highlight="Made an Impact"
-          description="From government systems to freelance projects — every role has been about building things that work in the real world."
-        />
+    <section id="experience" className="relative py-20 md:py-28" aria-label="Experience">
+      {/* Top rule */}
+      <div aria-hidden="true" className="absolute top-0 inset-x-0 h-px bg-[oklch(1_0_0/10%)]" />
 
-        <div className="max-w-2xl">
-          {entries.map((entry, index) => (
-            <TimelineItem
-              key={entry.id}
-              entry={entry}
-              index={index}
-              isLast={index === entries.length - 1}
-            />
-          ))}
+      <div className="mx-auto w-full max-w-[80rem] px-6 sm:px-10 lg:px-14">
+        {/* Two-column layout matching Process/Projects pattern */}
+        <div className="flex flex-col gap-16 lg:flex-row lg:gap-24">
+          
+          {/* Left — section header */}
+          <div className="lg:w-[38%] lg:pt-1">
+            <ExperienceHeader />
+          </div>
+
+          {/* Right — timeline list */}
+          <div className="flex-1">
+            {entries.map((entry, index) => (
+              <TimelineItem
+                key={entry.id}
+                entry={entry}
+                index={index}
+                isLast={index === entries.length - 1}
+              />
+            ))}
+          </div>
         </div>
       </div>
     </section>

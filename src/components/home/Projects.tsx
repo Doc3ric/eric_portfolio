@@ -1,199 +1,105 @@
 "use client";
 
-import { useState, useMemo } from "react";
-import { Search, Filter, ArrowUpDown } from "lucide-react";
-import { Input } from "@/components/ui/input";
-import { ProjectCard } from "@/components/projects/ProjectCard";
-import { SectionHeader } from "@/components/shared/SectionHeader";
+import { motion, useInView } from "motion/react";
+import { useRef } from "react";
+import { ProjectRow } from "@/components/projects/ProjectRow";
 import featuredData from "@/content/featured.json";
-import type { FeaturedWorkItem, ProjectCategory, ProjectStatus } from "@/types";
+import type { FeaturedWorkItem } from "@/types";
 
-const projects = featuredData as FeaturedWorkItem[];
+// Cast the JSON to a richer shape that includes optional fields from the data
+type ProjectData = FeaturedWorkItem & {
+  year?: number;
+  role?: string;
+  duration?: string;
+  metrics?: { label: string; value: string }[];
+  images?: { coverImage?: string; thumbnail?: string };
+  liveUrl?: string;
+  githubUrl?: string;
+  category?: string[];
+};
 
-const categories: { value: string; label: string }[] = [
-  { value: "all", label: "All Projects" },
-  { value: "web", label: "Web Apps" },
-  { value: "mobile", label: "Mobile Apps" },
-  { value: "ai", label: "AI & ML" },
-  { value: "government", label: "Government" },
-];
+const projects = (featuredData as ProjectData[]).sort(
+  (a, b) => (a.order ?? 99) - (b.order ?? 99)
+);
 
-const statuses: { value: string; label: string }[] = [
-  { value: "all", label: "All Statuses" },
-  { value: "production", label: "Production" },
-  { value: "in-progress", label: "In Progress" },
-  { value: "personal", label: "Personal" },
-];
-
-export function Projects() {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState<string>("all");
-  const [selectedStatus, setSelectedStatus] = useState<string>("all");
-  const [sortBy, setSortBy] = useState<"newest" | "oldest">("newest");
-
-  // Get all unique technologies across all projects for the tech filter dropdown
-  const allTechnologies = useMemo(() => {
-    const techSet = new Set<string>();
-    projects.forEach((p) => p.techStack.forEach((t) => techSet.add(t)));
-    return ["all", ...Array.from(techSet)];
-  }, []);
-
-  const [selectedTech, setSelectedTech] = useState<string>("all");
-
-  const filteredProjects = useMemo(() => {
-    return projects
-      .filter((project) => {
-        // Search filter (title, description, tech stack)
-        const query = searchQuery.toLowerCase();
-        const matchesSearch =
-          project.title.toLowerCase().includes(query) ||
-          project.description.toLowerCase().includes(query) ||
-          project.techStack.some((t) => t.toLowerCase().includes(query));
-
-        // Category filter
-        const matchesCategory =
-          selectedCategory === "all" ||
-          (project as any).category?.includes(selectedCategory);
-
-        // Status filter
-        const matchesStatus =
-          selectedStatus === "all" || project.status === selectedStatus;
-
-        // Technology filter
-        const matchesTech =
-          selectedTech === "all" || project.techStack.includes(selectedTech);
-
-        return matchesSearch && matchesCategory && matchesStatus && matchesTech;
-      })
-      .sort((a, b) => {
-        // Sort by year/order
-        const yearA = (a as any).year || 2024;
-        const yearB = (b as any).year || 2024;
-        return sortBy === "newest" ? yearB - yearA : yearA - yearB;
-      });
-  }, [searchQuery, selectedCategory, selectedStatus, selectedTech, sortBy]);
+// ─────────────────────────────────────────────────────────────────────────────
+// Section header — matches the hero's label + heading pattern:
+// small monospace caps label → large tight heading
+// ─────────────────────────────────────────────────────────────────────────────
+function ProjectsHeader() {
+  const ref = useRef<HTMLDivElement>(null);
+  const inView = useInView(ref, { once: true, margin: "0px 0px -60px 0px" });
 
   return (
-    <section id="projects" className="section bg-background/50" aria-label="All Projects">
-      <div className="container-xl flex flex-col gap-12">
-        <SectionHeader
-          eyebrow="Portfolio"
-          heading="All Projects I Have"
-          highlight="Developed"
-          description="Explore my complete catalog of applications. Filter by category, status, technology, or search directly for specific libraries."
-        />
+    <motion.div
+      ref={ref}
+      initial={{ opacity: 0, y: 20 }}
+      animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+      transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+      className="flex flex-col gap-4 pb-4"
+    >
+      {/* Eyebrow — mirrors hero label treatment exactly */}
+      <p className="font-mono text-[10px] tracking-widest uppercase" style={{ color: "oklch(0.72 0.18 210)" }}>
+        — FEATURED WORK —
+      </p>
 
-        {/* Filters Controls Panel */}
-        <div className="flex flex-col gap-4 rounded-2xl border border-border bg-surface-1 p-5 shadow-lg">
-          {/* Row 1: Search & Category Tabs */}
-          <div className="flex flex-col gap-4 lg:flex-row lg:items-center justify-between">
-            {/* Search Input */}
-            <div className="relative w-full lg:max-w-xs">
-              <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-              <Input
-                placeholder="Search projects or tech..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10"
-              />
-            </div>
+      {/* Section heading — same weight/scale family as "Full Stack Engineer" */}
+      <h2 className="font-sans text-[clamp(2rem,5vw,3.5rem)] font-bold leading-[1.0] tracking-[-0.03em] text-foreground">
+        Projects That{" "}
+        <span className="text-foreground/40">Shipped to Production</span>
+      </h2>
 
-            {/* Category tabs */}
-            <div className="flex flex-wrap gap-1">
-              {categories.map((cat) => (
-                <button
-                  key={cat.value}
-                  onClick={() => setSelectedCategory(cat.value)}
-                  className={`rounded-lg px-3 py-1.5 text-xs font-semibold transition-all ${
-                    selectedCategory === cat.value
-                      ? "bg-primary text-primary-foreground shadow"
-                      : "text-muted-foreground hover:bg-surface-2 hover:text-foreground"
-                  }`}
-                >
-                  {cat.label}
-                </button>
-              ))}
-            </div>
-          </div>
+      {/* Subtext — matches hero body text tone */}
+      <p className="mt-2 max-w-xl text-base leading-relaxed text-muted-foreground">
+        A selection of production systems, AI-powered tools, and web
+        applications — built solo and delivered end-to-end.
+      </p>
+    </motion.div>
+  );
+}
 
-          {/* Row 2: Secondary Dropdowns Filters */}
-          <div className="flex flex-wrap items-center gap-3 border-t border-border pt-4 text-xs">
-            {/* Status Dropdown */}
-            <div className="flex items-center gap-2">
-              <Filter className="h-3.5 w-3.5 text-muted-foreground" />
-              <span className="text-muted-foreground">Status:</span>
-              <select
-                value={selectedStatus}
-                onChange={(e) => setSelectedStatus(e.target.value)}
-                className="rounded-lg border border-border bg-surface-2 px-2 py-1.5 font-medium text-foreground outline-none cursor-pointer focus:border-ring"
-              >
-                {statuses.map((stat) => (
-                  <option key={stat.value} value={stat.value}>
-                    {stat.label}
-                  </option>
-                ))}
-              </select>
-            </div>
+// ─────────────────────────────────────────────────────────────────────────────
+// Projects section
+// ─────────────────────────────────────────────────────────────────────────────
+export function Projects() {
+  return (
+    <section
+      id="projects"
+      aria-label="Projects section"
+      className="relative py-20 md:py-28"
+    >
+      {/* Faint top rule — mirrors hero's section boundary */}
+      <div aria-hidden="true" className="absolute top-0 inset-x-0 h-px bg-[oklch(1_0_0/10%)]" />
 
-            {/* Tech Dropdown */}
-            <div className="flex items-center gap-2">
-              <span className="text-muted-foreground">Technology:</span>
-              <select
-                value={selectedTech}
-                onChange={(e) => setSelectedTech(e.target.value)}
-                className="rounded-lg border border-border bg-surface-2 px-2 py-1.5 font-medium text-foreground outline-none cursor-pointer focus:border-ring max-w-[150px]"
-              >
-                <option value="all">All Tech</option>
-                {allTechnologies
-                  .filter((t) => t !== "all")
-                  .map((tech) => (
-                    <option key={tech} value={tech}>
-                      {tech}
-                    </option>
-                  ))}
-              </select>
-            </div>
+      <div className="mx-auto w-full max-w-[80rem] px-6 sm:px-10 lg:px-14">
+        {/* Section header */}
+        <ProjectsHeader />
 
-            {/* Sort Toggle */}
-            <div className="flex items-center gap-2 ml-auto">
-              <ArrowUpDown className="h-3.5 w-3.5 text-muted-foreground" />
-              <span className="text-muted-foreground">Sort by:</span>
-              <select
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value as "newest" | "oldest")}
-                className="rounded-lg border border-border bg-surface-2 px-2 py-1.5 font-medium text-foreground outline-none cursor-pointer focus:border-ring"
-              >
-                <option value="newest">Newest First</option>
-                <option value="oldest">Oldest First</option>
-              </select>
-            </div>
-          </div>
+        {/* Project list — vertical rows, separated by rules */}
+        <div className="mt-12 lg:mt-16">
+          {projects.map((project, index) => (
+            <ProjectRow
+              key={project.id}
+              project={project}
+              index={index}
+            />
+          ))}
         </div>
 
-        {/* Projects Grid Display */}
-        {filteredProjects.length > 0 ? (
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {filteredProjects.map((project, index) => (
-              <ProjectCard key={project.id} project={project} index={index} />
-            ))}
-          </div>
-        ) : (
-          <div className="rounded-2xl border border-border bg-surface-1 p-12 text-center flex flex-col items-center justify-center gap-3">
-            <p className="text-sm font-semibold text-foreground">No projects match your criteria.</p>
-            <p className="text-xs text-muted-foreground">Try clearing your filters or resetting search input.</p>
-            <button
-              onClick={() => {
-                setSearchQuery("");
-                setSelectedCategory("all");
-                setSelectedStatus("all");
-                setSelectedTech("all");
-              }}
-              className="mt-2 text-xs font-semibold text-brand-blue hover:underline"
-            >
-              Reset All Filters
-            </button>
-          </div>
-        )}
+        {/* Footer note — plain text, no button pill */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true, margin: "0px 0px -40px 0px" }}
+          transition={{ duration: 0.6, delay: 0.3 }}
+          className="mt-10 flex items-center gap-4"
+        >
+          <div className="h-px flex-1 bg-[oklch(1_0_0/10%)]" />
+          <p className="font-mono text-[10px] tracking-widest uppercase text-[oklch(0.4_0_0)]">
+            {projects.length} projects · More coming
+          </p>
+          <div className="h-px flex-1 bg-[oklch(1_0_0/8%)]" />
+        </motion.div>
       </div>
     </section>
   );

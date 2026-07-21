@@ -1,266 +1,327 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
-import { motion, AnimatePresence } from "motion/react";
-import { ArrowRight, Download, Mail, MapPin, Sparkles } from "lucide-react";
-import { buttonVariants } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { cn } from "@/lib/utils";
-import { FadeUp } from "@/components/shared/FadeUp";
+import Link from "next/link";
+import { motion, useScroll, useTransform } from "motion/react";
+import { ArrowUpRight, Download, MapPin } from "lucide-react";
 import { siteConfig } from "@/config/site.config";
 
-// Floating badge positions around the profile card
-const floatingBadges = [
-  { label: "Laravel", className: "-top-4 -left-8 rotate-[-8deg]", delay: 0 },
-  { label: "Next.js", className: "-top-6 right-2 rotate-[6deg]", delay: 0.15 },
-  { label: "React", className: "top-1/3 -right-10 rotate-[10deg]", delay: 0.3 },
-  { label: "AI", className: "bottom-16 -right-8 rotate-[-5deg]", delay: 0.1 },
-  { label: "TypeScript", className: "-bottom-4 left-4 rotate-[4deg]", delay: 0.25 },
-];
+// ─────────────────────────────────────────────────────────────────────────────
+// Types
+// ─────────────────────────────────────────────────────────────────────────────
+interface BlinkingCursorProps {
+  className?: string;
+}
 
+// ─────────────────────────────────────────────────────────────────────────────
+// Sub-components
+// ─────────────────────────────────────────────────────────────────────────────
+
+/** Blinking terminal cursor — one accent micro-detail */
+function BlinkingCursor({ className = "" }: BlinkingCursorProps) {
+  return (
+    <motion.span
+      aria-hidden="true"
+      className={`inline-block w-[3px] h-[1em] bg-[var(--accent-mark)] align-middle ${className}`}
+      animate={{ opacity: [1, 0, 1] }}
+      transition={{ duration: 1.1, repeat: Infinity, ease: "linear" }}
+    />
+  );
+}
+
+/** Scroll-triggered line that draws itself in */
+function DrawLine({ delay = 0 }: { delay?: number }) {
+  return (
+    <motion.div
+      className="absolute left-0 top-0 h-full w-px bg-[var(--rule-color)]"
+      initial={{ scaleY: 0, originY: 0 }}
+      animate={{ scaleY: 1 }}
+      transition={{ duration: 1.2, delay, ease: [0.16, 1, 0.3, 1] }}
+    />
+  );
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Hero
+// ─────────────────────────────────────────────────────────────────────────────
 export function Hero() {
-  const [titleIndex, setTitleIndex] = useState(0);
-  const titles = siteConfig.rotatingTitles;
+  const [mounted, setMounted] = useState(false);
+  const sectionRef = useRef<HTMLElement>(null);
 
-  // Rotate subtitle every 2.5 seconds
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start start", "end start"],
+  });
+
+  // Parallax: image drifts up slightly as user scrolls
+  const imageY = useTransform(scrollYProgress, [0, 1], ["0%", "12%"]);
+
   useEffect(() => {
-    const interval = setInterval(() => {
-      setTitleIndex((i) => (i + 1) % titles.length);
-    }, 2500);
-    return () => clearInterval(interval);
-  }, [titles.length]);
+    setMounted(true);
+  }, []);
+
+  const stackItems = [
+    "Laravel",
+    "React",
+    "Next.js",
+    "TypeScript",
+    "Inertia.js",
+    "Tailwind",
+    "MySQL",
+    "AI/LLMs",
+    "REST APIs",
+    "Flutter",
+  ];
 
   return (
     <section
+      ref={sectionRef}
       id="home"
-      className="relative min-h-screen pt-16"
       aria-label="Hero section"
+      className="hero-section relative min-h-screen pt-[var(--nav-height)] overflow-hidden"
     >
-      <div className="container-xl flex min-h-[calc(100vh-4rem)] flex-col items-center justify-center py-20 lg:flex-row lg:gap-16 lg:py-28">
-        {/* ── Left Column ────────────────────────────────────────── */}
-        <div className="flex flex-1 flex-col gap-10 text-center lg:text-left">
-          {/* Availability badge */}
-          <FadeUp delay={0}>
-            <div className="flex justify-center lg:justify-start">
-              <div className="inline-flex items-center gap-2 rounded-full border border-status-production/30 bg-status-production/10 px-4 py-1.5 text-sm text-status-production">
-                <span className="relative flex h-2 w-2">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-status-production opacity-75" />
-                  <span className="relative inline-flex h-2 w-2 rounded-full bg-status-production" />
-                </span>
-                {siteConfig.availabilityLabel}
-              </div>
-            </div>
-          </FadeUp>
+      {/* ── CSS custom properties scoped to hero ─────────────────────────── */}
+      <style>{`
+        .hero-section {
+          --nav-height: 4rem;
+          --accent-mark: oklch(0.72 0.18 210);   /* single accent — cyan */
+          --rule-color: oklch(1 0 0 / 10%);
+          --label-color: oklch(0.55 0 0);
+          --hero-max: 80rem;
+        }
+      `}</style>
 
-          {/* Headline */}
-          <FadeUp delay={0.1}>
-            <h1 className="text-4xl font-bold leading-tight tracking-tight sm:text-5xl md:text-6xl lg:text-6xl xl:text-7xl">
-              Building <span className="gradient-text">Production-Ready</span>
-              <br className="hidden sm:block" />
-              Web Applications
-              <br className="hidden sm:block" />
-              with Laravel, React <span className="gradient-text">&amp; AI</span>
-            </h1>
-          </FadeUp>
+      {/* ── Noise / grain texture overlay ────────────────────────────────── */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 z-0 opacity-[0.025]"
+        style={{
+          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")`,
+          backgroundRepeat: "repeat",
+          backgroundSize: "128px",
+        }}
+      />
 
-          {/* Rotating subtitle */}
-          <FadeUp delay={0.2}>
-            <div className="flex h-8 items-center justify-center overflow-hidden lg:justify-start">
-              <AnimatePresence mode="wait">
-                <motion.p
-                  key={titleIndex}
-                  initial={{ opacity: 0, y: 16 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -16 }}
-                  transition={{ duration: 0.35, ease: "easeOut" }}
-                  className="text-lg font-medium text-brand-blue sm:text-xl"
-                >
-                  {titles[titleIndex]}
-                </motion.p>
-              </AnimatePresence>
-            </div>
-          </FadeUp>
+      {/* ── Faint horizontal rule at very top of section ─────────────────── */}
+      <div
+        aria-hidden="true"
+        className="absolute top-[var(--nav-height)] inset-x-0 h-px bg-[var(--rule-color)]"
+      />
 
-          {/* Description */}
-          <FadeUp delay={0.3}>
-            <p className="mx-auto max-w-xl text-base leading-relaxed text-muted-foreground lg:mx-0 lg:text-lg">
-              {siteConfig.name} — {siteConfig.title} from{" "}
-              <span className="text-foreground/80">{siteConfig.location}</span>.
-              Building software that solves real-world problems. I specialize in scalable web applications, AI-powered tools, dashboards, and government systems.
-            </p>
-          </FadeUp>
+      {/* ════════════════════════════════════════════════════════════════════
+          Main grid — intentionally asymmetric: 55 / 45 split on desktop,
+          stacked on mobile
+      ════════════════════════════════════════════════════════════════════ */}
+      <div className="relative z-10 mx-auto flex min-h-[calc(100vh-var(--nav-height))] max-w-[var(--hero-max)] flex-col lg:flex-row">
 
-          {/* Location pill */}
-          <FadeUp delay={0.35}>
-            <div className="flex justify-center lg:justify-start">
-              <span className="inline-flex items-center gap-1.5 text-sm text-muted-foreground">
-                <MapPin className="h-3.5 w-3.5" />
-                {siteConfig.location}
-              </span>
-            </div>
-          </FadeUp>
+        {/* ── LEFT COLUMN ─────────────────────────────────────────────────── */}
+        <div className="flex flex-col justify-between px-6 pb-16 pt-20 sm:px-10 lg:w-[55%] lg:px-14 md:pb-28 md:pt-28 lg:pb-20 lg:pt-28">
 
-          {/* CTA buttons */}
-          <FadeUp delay={0.4}>
-            <div className="flex flex-wrap items-center justify-center gap-3 lg:justify-start">
-              <a
-                href="/#projects"
-                className={cn(
-                  buttonVariants(),
-                  "gap-2 bg-gradient-to-r from-brand-blue to-brand-purple text-white hover:opacity-90"
-                )}
-              >
-                View Projects
-                <ArrowRight className="h-4 w-4" />
-              </a>
-              <a
-                href={siteConfig.resume}
-                download
-                className={cn(
-                  buttonVariants({ variant: "outline" }),
-                  "gap-2 border-border bg-surface-1/50 hover:bg-surface-2 hover:border-brand-blue/30 backdrop-blur-sm shadow-sm"
-                )}
-              >
-                <Download className="h-4 w-4" />
-                Download Resume
-              </a>
-              <a
-                href="/#contact"
-                className={cn(
-                  buttonVariants({ variant: "ghost" }),
-                  "gap-2 text-muted-foreground hover:text-foreground"
-                )}
-              >
-                <Mail className="h-4 w-4" />
-                Contact Me
-              </a>
-            </div>
-          </FadeUp>
-
-          {/* Highlights & Mini Stats */}
+          {/* ·· Top label row ·· */}
           <motion.div
-            initial={{ opacity: 0, y: 24 }}
+            initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5, duration: 0.5, ease: "easeOut" }}
-            className="mt-2 flex flex-col gap-6 border-t border-border/50 pt-6"
+            transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+            className="flex items-center gap-3"
           >
-            <div className="flex flex-wrap items-center justify-center gap-3 lg:justify-start">
-              {["Government Systems", "AI Applications", "REST APIs", "Modern Dashboards"].map((pill) => (
-                <span
-                  key={pill}
-                  className="inline-flex items-center gap-1.5 rounded-full bg-surface-1/50 border border-border px-3 py-1 text-xs font-medium text-muted-foreground"
-                >
-                  <span className="text-brand-blue">✔</span>
-                  {pill}
+            {/* Availability pulse — plain dot, no pill */}
+            {siteConfig.availability && (
+              <span className="flex items-center gap-2 text-xs tracking-widest uppercase text-[var(--label-color)]">
+                <span className="relative flex h-1.5 w-1.5">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[var(--accent-mark)] opacity-60" />
+                  <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-[var(--accent-mark)]" />
                 </span>
-              ))}
+                Available for work
+              </span>
+            )}
+            <span className="text-[var(--rule-color)] text-xs">·</span>
+            <span className="flex items-center gap-1 text-xs tracking-widest uppercase text-[var(--label-color)]">
+              <MapPin className="h-3 w-3" aria-hidden="true" />
+              PH
+            </span>
+          </motion.div>
+
+          {/* ·· Headline — large, tight, type-led ·· */}
+          <motion.div
+            initial={{ opacity: 0, y: 32 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
+            className="mt-12 lg:mt-0 lg:flex-1 lg:flex lg:flex-col lg:justify-center"
+          >
+            <h1 className="font-sans text-[clamp(2.8rem,7vw,5.5rem)] font-bold leading-[0.95] tracking-[-0.03em] text-foreground">
+              Full Stack
+              <br />
+              <span className="text-foreground/40">Engineer</span>
+              <BlinkingCursor className="ml-2 mb-1" />
+            </h1>
+
+            {/* Sub-heading — role line, monospace feel */}
+            <p className="mt-6 font-mono text-xs tracking-widest uppercase text-[var(--label-color)]">
+              Eric Alenton &nbsp;/&nbsp; Malaybalay City, Bukidnon, Philippines
+            </p>
+
+            {/* Bio paragraph */}
+            <p className="mt-8 max-w-md text-base leading-relaxed text-muted-foreground lg:text-lg">
+              Building production-grade web applications with Laravel, React,
+              and AI. I specialise in government systems, dashboards, and
+              tools that solve real-world problems.
+            </p>
+
+            {/* ·· Stack row — inline text, not chips ·· */}
+            <div className="mt-8">
+              <p className="mb-2 font-mono text-[10px] tracking-widest uppercase text-[var(--label-color)]">
+                Stack
+              </p>
+              <p className="font-mono text-sm text-muted-foreground/70">
+                {stackItems.join(" · ")}
+              </p>
             </div>
-            <div className="flex justify-center gap-8 lg:justify-start">
-              <div className="flex flex-col">
-                <span className="text-2xl font-bold text-foreground">12+</span>
-                <span className="text-xs text-muted-foreground uppercase tracking-wider">Projects</span>
-              </div>
-              <div className="h-10 w-px bg-border/50" />
-              <div className="flex flex-col">
-                <span className="text-2xl font-bold text-foreground">3</span>
-                <span className="text-xs text-muted-foreground uppercase tracking-wider">Production</span>
-              </div>
-              <div className="h-10 w-px bg-border/50" />
-              <div className="flex flex-col">
-                <span className="text-2xl font-bold text-foreground">20+</span>
-                <span className="text-xs text-muted-foreground uppercase tracking-wider">Technologies</span>
-              </div>
-            </div>
+          </motion.div>
+
+          {/* ·· CTA row — text links, no pill buttons ·· */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 0.35, ease: [0.16, 1, 0.3, 1] }}
+            className="mt-16 flex flex-wrap items-center gap-6 lg:mt-0"
+          >
+            {/* Primary — underline link */}
+            <Link
+              href="/#projects"
+              id="hero-view-projects"
+              className="group inline-flex items-center gap-2 font-medium text-foreground underline-offset-4 transition-all hover:underline"
+            >
+              View Projects
+              <ArrowUpRight
+                className="h-4 w-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+                aria-hidden="true"
+              />
+            </Link>
+
+            {/* Secondary — subtle border button */}
+            <a
+              href={siteConfig.resume}
+              download
+              id="hero-download-resume"
+              className="group inline-flex items-center gap-2 border-b border-[var(--rule-color)] pb-0.5 font-medium text-muted-foreground transition-colors hover:border-foreground/30 hover:text-foreground"
+            >
+              <Download className="h-3.5 w-3.5" aria-hidden="true" />
+              Download Résumé
+            </a>
+
+            {/* Tertiary */}
+            <a
+              href="/#contact"
+              id="hero-contact"
+              className="font-medium text-muted-foreground/60 transition-colors hover:text-muted-foreground"
+            >
+              Contact Me
+            </a>
           </motion.div>
         </div>
 
-        {/* ── Right Column — Profile Card ─────────────────────────── */}
-        <FadeUp
-          delay={0.2}
-          className="relative mt-12 flex shrink-0 justify-center lg:mt-0"
+        {/* ── RIGHT COLUMN — photo treatment ──────────────────────────────── */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 1, delay: 0.2 }}
+          className="relative hidden overflow-hidden lg:block lg:w-[45%]"
         >
-          <div className="relative">
-            {/* Profile image soft glow */}
-            <div className="absolute inset-0 -m-8 bg-brand-blue/20 blur-[100px] rounded-full z-0 opacity-50" />
+          {/* Vertical rule separating columns */}
+          <div className="relative h-full">
+            <DrawLine delay={0.4} />
 
-            {/* Profile photo card */}
+            {/* Photo — grayscale, parallax drift, no badges on top */}
             <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.3, duration: 0.5, ease: "easeOut" }}
-              className="relative h-80 w-72 overflow-hidden rounded-3xl border border-border bg-surface-1 shadow-2xl sm:h-96 sm:w-80 z-10"
+              style={{ y: mounted ? imageY : "0%" }}
+              className="absolute inset-0"
             >
-              {/* Profile Image (points to public/images/profile.png) */}
-              <div className="absolute inset-0 z-0">
-                <Image
-                  src="/images/profile.png"
-                  alt={siteConfig.name}
-                  fill
-                  priority
-                  sizes="(max-width: 768px) 256px, 288px"
-                  className="object-cover transition-transform duration-500 hover:scale-105"
-                />
-              </div>
-
-              {/* Gradient fallback/dark overlay to ensure text readability */}
-              <div className="absolute inset-0 z-10 bg-gradient-to-t from-background/90 via-background/20 to-transparent" />
-
-              {/* Availability badge — bottom of card */}
-              <motion.div
-                className="absolute bottom-4 left-1/2 -translate-x-1/2 z-20"
-                animate={{ y: [0, -3, 0] }}
-                transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
-              >
-                <div className="flex items-center gap-2 rounded-full border border-status-production/30 bg-status-production/10 px-3 py-1.5 text-xs font-medium text-status-production shadow-lg backdrop-blur-sm">
-                  <span className="relative flex h-1.5 w-1.5">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-status-production opacity-75" />
-                    <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-status-production" />
-                  </span>
-                  Available for work
-                </div>
-              </motion.div>
+              <Image
+                src="/images/profileremovebg.png"
+                alt={`${siteConfig.name} — ${siteConfig.title}`}
+                fill
+                priority
+                sizes="(max-width: 1024px) 0px, 45vw"
+                className="object-cover object-top grayscale transition-all duration-700 hover:grayscale-0"
+                style={{ objectPosition: "center top" }}
+              />
+              {/* Bottom fade so photo merges into page */}
+              <div
+                aria-hidden="true"
+                className="absolute bottom-0 inset-x-0 h-48 bg-gradient-to-t from-background via-background/60 to-transparent"
+              />
+              {/* Left-edge vignette so the column line reads cleanly */}
+              <div
+                aria-hidden="true"
+                className="absolute inset-y-0 left-0 w-12 bg-gradient-to-r from-background to-transparent"
+              />
             </motion.div>
 
-            {/* Floating tech badges (rendered after card and styled to sit on top with high contrast) */}
-            {floatingBadges.map(({ label, className, delay }) => (
-              <motion.div
-                key={label}
-                className={cn("absolute z-20", className)}
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: delay + 0.5, duration: 0.4, ease: "easeOut" }}
-              >
-                <motion.div
-                  animate={{ y: [0, -12, 0] }}
-                  transition={{
-                    duration: 3 + Math.random() * 2,
-                    repeat: Infinity,
-                    ease: "easeInOut",
-                    delay: Math.random() * 2,
-                  }}
-                  className="rounded-full border border-border bg-surface-1/90 px-3.5 py-1.5 text-xs font-semibold text-foreground shadow-xl backdrop-blur-md hover:border-brand-blue/30 transition-all cursor-default select-none"
-                >
-                  {label}
-                </motion.div>
-              </motion.div>
-            ))}
+            {/* ·· Info overlay — bottom-right corner ·· */}
+            <motion.div
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.7, ease: [0.16, 1, 0.3, 1] }}
+              className="absolute bottom-8 right-8 z-10 space-y-1 text-right"
+            >
+              <p className="font-mono text-[10px] tracking-widest uppercase text-[var(--label-color)]">
+                {siteConfig.stats.projects} projects delivered
+              </p>
+              <p className="font-mono text-[10px] tracking-widest uppercase text-[var(--label-color)]">
+                {siteConfig.stats.productionSystems} in production
+              </p>
+              <p className="font-mono text-[10px] tracking-widest uppercase text-[var(--label-color)]">
+                {siteConfig.stats.years} years experience
+              </p>
+            </motion.div>
           </div>
-        </FadeUp>
+        </motion.div>
+
+        {/* ── Mobile photo — below fold, cropped, grayscale ─────────────── */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.8, delay: 0.4 }}
+          className="relative h-64 w-full overflow-hidden sm:h-80 lg:hidden"
+        >
+          <Image
+            src="/images/profileremovebg.png"
+            alt={`${siteConfig.name} — ${siteConfig.title}`}
+            fill
+            priority
+            sizes="100vw"
+            className="object-cover object-top grayscale"
+            style={{ objectPosition: "center 15%" }}
+          />
+          <div
+            aria-hidden="true"
+            className="absolute inset-0 bg-gradient-to-t from-background via-background/30 to-transparent"
+          />
+        </motion.div>
       </div>
 
-      {/* Scroll indicator */}
+      {/* ── Bottom rule ───────────────────────────────────────────────────── */}
+      <motion.div
+        aria-hidden="true"
+        initial={{ scaleX: 0, originX: 0 }}
+        animate={{ scaleX: 1 }}
+        transition={{ duration: 1.4, delay: 0.6, ease: [0.16, 1, 0.3, 1] }}
+        className="absolute bottom-0 inset-x-0 h-px bg-[var(--rule-color)]"
+      />
+
+      {/* ── Scroll indicator ─────────────────────────────────────────────── */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 1.2, duration: 0.5 }}
-        className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
+        transition={{ delay: 1.4, duration: 0.6 }}
+        className="absolute bottom-6 left-1/2 -translate-x-1/2 hidden flex-col items-center gap-2 lg:flex"
+        aria-hidden="true"
       >
-        <span className="text-xs text-muted-foreground/50">Scroll to explore</span>
         <motion.div
-          animate={{ y: [0, 6, 0] }}
-          transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
-          className="h-5 w-px bg-gradient-to-b from-muted-foreground/30 to-transparent"
+          animate={{ y: [0, 7, 0] }}
+          transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}
+          className="h-6 w-px bg-gradient-to-b from-[var(--label-color)] to-transparent"
         />
       </motion.div>
     </section>
