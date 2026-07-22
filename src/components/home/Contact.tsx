@@ -152,6 +152,17 @@ export function Contact() {
           <div className="lg:w-[38%] lg:pt-1 flex flex-col gap-12">
             <ContactHeader />
             
+            {/* Availability Status */}
+            <div className="flex items-center gap-2">
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-status-production opacity-75" />
+                <span className="relative inline-flex h-2 w-2 rounded-full bg-status-production" />
+              </span>
+              <span className="font-mono text-[10px] tracking-widest uppercase text-muted-foreground">
+                Available for Freelance & Remote Opportunities
+              </span>
+            </div>
+
             {/* Primary Details */}
             <div className="flex flex-col gap-8">
               <DetailItem label="Email" value={siteConfig.email} href={`mailto:${siteConfig.email}`} icon={Mail} delay={0.1} />
@@ -180,11 +191,18 @@ export function Contact() {
               onSubmit={handleSubmit}
               className="flex flex-col gap-10 lg:pl-10 lg:border-l lg:border-[oklch(1_0_0/10%)] lg:min-h-full"
             >
+              <div className="flex justify-between items-center pb-2 border-b border-[oklch(1_0_0/10%)] sm:hidden">
+                 <span className="font-mono text-[10px] tracking-widest uppercase text-muted-foreground">Prefer email? Just click above</span>
+              </div>
+              <div className="hidden sm:flex justify-end pb-2">
+                 <span className="font-mono text-[10px] tracking-widest uppercase text-muted-foreground">Prefer email? Just click the link on the left</span>
+              </div>
+
               <div className="grid grid-cols-1 gap-10 sm:grid-cols-2">
                 {/* Name */}
                 <div className="flex flex-col gap-2">
                   <label htmlFor="name" className="font-mono text-[10px] tracking-widest uppercase text-[oklch(0.45_0_0)]">
-                    Your Name <span style={{ color: "oklch(0.72 0.18 210)" }}>*</span>
+                    Your Name <span className="text-muted-foreground/50">*</span>
                   </label>
                   <input
                     id="name"
@@ -202,7 +220,7 @@ export function Contact() {
                 {/* Email */}
                 <div className="flex flex-col gap-2">
                   <label htmlFor="email" className="font-mono text-[10px] tracking-widest uppercase text-[oklch(0.45_0_0)]">
-                    Email Address <span style={{ color: "oklch(0.72 0.18 210)" }}>*</span>
+                    Email Address <span className="text-muted-foreground/50">*</span>
                   </label>
                   <input
                     id="email"
@@ -238,7 +256,7 @@ export function Contact() {
               {/* Message */}
               <div className="flex flex-col gap-2">
                 <label htmlFor="message" className="font-mono text-[10px] tracking-widest uppercase text-[oklch(0.45_0_0)]">
-                  Message <span style={{ color: "oklch(0.72 0.18 210)" }}>*</span>
+                  Message <span className="text-muted-foreground/50">*</span>
                 </label>
                 <textarea
                   id="message"
@@ -264,11 +282,10 @@ export function Contact() {
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -10 }}
-                        className="flex items-center gap-2.5 text-sm"
-                        style={{ color: "oklch(0.72 0.18 210)" }}
+                        className="flex items-center gap-2.5 text-sm text-muted-foreground"
                       >
-                        <CheckCircle2 className="h-4.5 w-4.5 shrink-0" />
-                        <span>Thank you! Your message was sent successfully.</span>
+                        <CheckCircle2 className="h-4.5 w-4.5 shrink-0" style={{ color: "oklch(0.72 0.18 210)" }} />
+                        <span>Message sent — I'll get back to you within 24 hours</span>
                       </motion.div>
                     )}
 
