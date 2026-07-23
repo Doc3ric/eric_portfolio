@@ -244,8 +244,6 @@ export function DeveloperActivity() {
                   fontFamily: "var(--font-mono, monospace)",
                   fontSize: "11px",
                 }}
-                hideTotalCount={false}
-                hideColorLegend={false}
               />
             ) : (
               // Skeleton placeholder — same proportions as calendar
