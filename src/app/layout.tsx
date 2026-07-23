@@ -5,6 +5,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { ThemeProvider } from "@/components/shared/ThemeProvider";
 import { siteConfig } from "@/config/site.config";
 import { getPersonSchema, getWebsiteSchema } from "@/lib/structured-data";
+import { Analytics } from "@vercel/analytics/react";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -90,6 +91,7 @@ export default function RootLayout({
             {children}
           </TooltipProvider>
         </ThemeProvider>
+        <Analytics />
       </body>
     </html>
   );
