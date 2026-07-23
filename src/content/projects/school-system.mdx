@@ -32,53 +32,18 @@ description: "A live production school management system handling PTA payments, 
 ---
 
 ## Overview
+The School Management System is a centralized financial tracking platform designed to streamline fee collections, track payment statuses, and automate reporting across multiple school years. Built to replace inefficient manual processes, the application provides administrators with real-time financial visibility and robust reporting tools, significantly reducing administrative overhead.
 
-A fully live school management system actively used by an educational institution in Bukidnon. The system handles the complete student lifecycle — from enrollment to grade promotion — along with PTA payment management and official report generation.
+## The Problem
+Prior to this application, the school relied on fragmented spreadsheets and paper-based ledgers to manage PTA fee collections. This manual approach made it incredibly difficult to maintain accurate payment histories, identify parents with outstanding balances, and transition financial records smoothly between academic years. Generating end-of-term financial reports was a tedious, error-prone process that consumed hours of administrative time.
 
-## Problem
+## The Solution
+I developed a comprehensive, automated fee management system that digitizes the entire collection lifecycle. The application allows administrators to easily configure academic years, securely log payments, and instantly generate structured PDF and Excel reports for collected payments and unpaid dues. By centralizing the data into a single source of truth, the system eliminated data discrepancies and provided a clear, auditable trail for all financial transactions.
 
-The school was managing everything manually:
-- Enrollment records kept in physical filing cabinets
-- PTA payments tracked in handwritten ledgers
-- Report cards typed individually in Microsoft Word
-- No system for tracking grade promotion or retention
-
-## Architecture
-
-```
-├── Laravel 11 (backend)
-├── Livewire 3 (reactive UI)
-├── MySQL (relational data)
-└── Tailwind CSS (styling)
-```
-
-## Features
-
-- **Student Enrollment** — Digital enrollment with complete student profiles
-- **PTA Payment Management** — Track, record, and generate receipts for PTA fees
-- **Grade Management** — Input and manage grades per subject per student
-- **Grade Promotion** — Automated promotion/retention logic based on final grades
-- **Report Card Generation** — Auto-generated official report cards as PDF
-- **Parent Portal** — Parents can view their child's grades and payment status
-- **Teacher Portal** — Teachers manage grades for their assigned classes
-- **Admin Dashboard** — Full overview of school-wide data
-
-## Challenges
-
-**Challenge 1: Grade Promotion Logic**
-Filipino school grade promotion rules involve multiple subjects with different passing thresholds. I coded the promotion engine as a rules-based service class to handle edge cases cleanly.
-
-**Challenge 2: Report Card Layout**
-DepEd (Department of Education) report cards have very specific layouts. Getting DOMPDF to render the exact layout took significant iteration.
+## Technical Challenges & Architecture
+- **Performance-Optimized Reporting:** Engineered efficient data export pipelines to handle large administrative datasets. Generating real-time lists of unpaid parents required writing optimized, complex SQL queries to cross-reference total enrollments against payment ledgers without blocking the main application thread.
+- **Temporal Data & Schema Design:** Architected a robust relational database schema to seamlessly handle dynamic school year transitions. Financial records were carefully isolated by academic year, ensuring that historical data remained immutable for auditing purposes while current records remained highly accessible.
+- **Separation of Concerns for Data Pipelines:** Built custom export controllers (`PaymentsExport`, `UnpaidParentsExport`) to abstract complex data formatting logic away from the UI. This maintained strict MVC principles and ensured the system could quickly generate reliable, multi-format (PDF/Excel) financial summaries.
 
 ## Lessons Learned
-
-- Production systems require heavy testing — real student data cannot be corrupted
-- School staff needed ongoing training and support after deployment
-- Simple is better: every feature added complexity to the training burden
-
-## Future Improvements
-
-- SMS notifications for grades and payments
-- Financial summary reports for school administration
-- Biometric attendance integration
+This project reinforced the importance of writing highly optimized database queries when dealing with financial reporting, and demonstrated how automating previously manual data entry can deliver immediate, measurable business value to an organization.
